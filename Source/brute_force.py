@@ -1,4 +1,5 @@
 from itertools import product 
+import math
 
 def calculate_movement_displacement(a, b):
     """Calculate the cost of moving between chord play forms (fingering)"""
@@ -65,6 +66,9 @@ def minimum_movement_brute_force(chord_list, chord_dict):
             min_cost = cost
             min_cost_sequence = sequence
             min_cost_indices = list(idx_combination)
+    
+    # Square Root 
+    min_cost = math.sqrt(min_cost)
 
     # Return the indices of the best sequence and the total cost
     return min_cost_indices, min_cost_sequence, min_cost

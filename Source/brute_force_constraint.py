@@ -1,4 +1,5 @@
 from itertools import product 
+import math
 
 def calculate_movement_displacement(a, b):
     """Calculate the cost of moving between chord play forms (fingering)"""
@@ -6,7 +7,7 @@ def calculate_movement_displacement(a, b):
     average_fret_b = calculate_average_fret(b)
 
     # Increases the impact of big distances, and decreases that of small distances
-    return (average_fret_a - average_fret_b) ** 2
+    return (average_fret_a - average_fret_b)**2
 
 def calculate_average_fret(x):
     """Calculate the average fret of a manner of chord play form (fingering)"""
@@ -75,6 +76,10 @@ def minimum_movement_brute_force(chord_list, chord_dict):
             min_cost_sequence = sequence
             min_cost = cost                             # Overwritting of solution
             min_cost_indices = list(idx_combination)    # Sigma vector saving
+    
+    # Normalize the results from (frets**2) to (frets)
+    min_cost = math.sqrt(min_cost)
+    min_cost = round(min_cost, 2)
     
     # Return the indices of the best sequence (vector) and the total cost
     return min_cost_indices, min_cost_sequence, min_cost
