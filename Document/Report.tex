@@ -1,20 +1,19 @@
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
-\usepackage{float}
-\usepackage{hyperref}
 \usepackage{listings}
 \usepackage{pgfplots}
-\usepackage{booktabs}
-\usepackage{tikz} % Required for TikZ drawings
 \pgfplotsset{compat=1.18}
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
 \lstdefinestyle{mystyle}{
     basicstyle=\ttfamily\footnotesize,
     breakatwhitespace=false,         
@@ -28,20 +27,66 @@
     frame=single,
     rulecolor=\color{black}
 }
-\lstset{style=mystyle}
-\providecommand{\tabularnewline}{\\}
-\floatstyle{ruled}
-\newfloat{algorithm}{tbp}{loa}
-\providecommand{\algorithmname}{Algorithm}
-\floatname{algorithm}{\protect\algorithmname}
-\usetikzlibrary{calc}
 
-\title{Minimize Hand Displacement in a Song: Project 2 - Brute Force and Dynamic Programming}
-\author{\IEEEauthorblockN{Daniel Marin} \IEEEauthorblockA{\textit{Department of Computer Science}} \\ \textit{Texas Tech University} \\ San Jose, Costa Rica \\ danimari@ttu.edu}
-\author{\IEEEauthorblockN{Esteban Murillo} \IEEEauthorblockA{\textit{Department of Computer Science}} \\ \textit{Texas Tech University} \\ San Jose, Costa Rica \\ estmuril@ttu.edu}
-\date{December 9$^{th}$, 2024}
+\lstset{style=mystyle}
 
 \begin{document}
+
+\title{Minimize Hand Displacement in a Song: Project 2 - Brute Force and Dynamic Programming}
+
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Esteban Murillo}
+\IEEEauthorblockA{\textit{Department of Computer Science} \\
+\textit{Texas Tech University}\\
+Lubbock, TX \\
+estmuril@ttu.edu}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} Daniel Marin}
+\IEEEauthorblockA{\textit{Department of Computer Science} \\
+\textit{Texas Tech University}\\
+Lubbock, TX \\
+danimari@ttu.edu}
+}
+
 \maketitle
+
+\begin{abstract}
+This paper presents an algorithmic solution to optimize guitar chord transitions in musical sequences. We developed algorithms using both brute force and dynamic programming approaches to minimize left-hand displacement during chord changes. The system takes as input a sequence of chords in standard notation and a specification file containing multiple fingering positions for each chord. Our solution analyzes various possible chord positions and determines the optimal combination that minimizes the total hand movement throughout the song. The algorithms consider factors such as fret positions, string usage, and transitional distances between successive chord shapes. The results demonstrate an effective method for reducing physical strain and improving playability in guitar performances through computational optimization.
+\end{abstract}
+
+\begin{IEEEkeywords}
+dynamic programming, optimization algorithms, guitar chord transitions, musical computing, computational musicology, fingering optimization, performance automation
+\end{IEEEkeywords}
+
+\section{Introduction}
+The optimization of musical performance through computational methods has become increasingly relevant in modern music technology. In this paper, we address a specific challenge in guitar playing: minimizing the left-hand movement during chord transitions.
+
+When playing guitar, the positioning of the left hand on the fretboard significantly impacts both the physical effort required and the smoothness of the performance. A single chord can often be played in multiple positions on the fretboard, and the choice of these positions directly affects the distance the hand must travel when transitioning between chords. For instance, a C major chord can be played in several configurations, each requiring different finger placements and fret positions.
+
+The challenge lies in determining the optimal sequence of chord positions that minimizes the total hand movement throughout an entire song. This optimization must consider various factors:
+\begin{itemize}
+    \item Multiple valid fingering positions for each chord
+    \item The physical distance between successive chord positions
+    \item The practical playability of the chosen sequences
+    \item The specific requirements of open strings and unused strings in chord formations
+\end{itemize}
+
+To solve this problem, we developed two distinct algorithmic approaches. The first utilizes a brute force method, examining all possible combinations of chord positions to find the global optimum. The second employs dynamic programming techniques to efficiently compute the optimal solution by breaking down the problem into smaller subproblems and avoiding redundant calculations.
+
+Our solution takes two inputs: a sequence of chords in standard musical notation (e.g., C, Am, Dm, G7) and a specification file that details the various possible fingering positions for each chord. The specification file uses a numerical representation system where each chord is defined by a sequence of numbers representing the fret positions for each string, with special notation for open strings (0) and unused strings.
+
+\section{Methodology}
+
+
+
+\section{Results}
+
+
+\section{Conclusion}
+
+
+% \begin{thebibliography}{00}
+
+% \end{thebibliography}
 
 \end{document}
