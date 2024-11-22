@@ -38,7 +38,6 @@ def minimum_movement_brute_force(chord_list, chord_dict):
     for chord in chord_list:
         if chord in chord_dict:
             fingerings = []
-            # Filter available fingerings based on the 7th fret constraint
             for key in ['Finger A', 'Finger B', 'Finger C']:
                 if key in chord_dict[chord]:
                     fingering = chord_dict[chord][key]
