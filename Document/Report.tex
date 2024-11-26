@@ -89,7 +89,7 @@ The algorithm we are looking to develop processes a song's chord sequence in sta
     \( C = \{c_1, c_2, c_3, \dots, c_n\} \) where the \(c_i\) element in the list represents the \(i^{th}\) chord of the song.
     \item Chord Dict: is a helper dictionary that contains all possible fingerings of each chord instance in the considering their offsets. Thus providing a mapping from chord to fingerings available.
 \end{itemize}
-These inputs remain consistent to both the brute-force search and the dynamic programming solution. Also, understanding the format of the inputs is required for comprehending the algorithms.
+\indent These inputs remain consistent to both the brute-force search and the dynamic programming solution. Also, understanding the format of the inputs is required for comprehending the algorithms.
 \newline
 \indent Both algorithms return the same outputs, to answer (solve) the overall problem the user has. The outputs are:
 \begin{itemize}
@@ -98,7 +98,7 @@ These inputs remain consistent to both the brute-force search and the dynamic pr
     The \(\sigma\) represents the overall sequence of fingerings that minimize the overall hand displacement. 
     \item Optimal Sequence: this output represents the optimal vector as actual fingerings, it was used to debug the program. 
 \end{itemize}
-The outputs represent the solution towards the problem that we look to solve. They provide the how and the value of the solution to the problem.
+\indent The outputs represent the solution towards the problem that we look to solve. They provide the how and the value of the solution to the problem.
 \newline
 \indent Understanding the inputs and outputs of the black box (the algorithms), we need to look at some overlapping functions that are used to calculate displacement based on what the professor stated in the project definition document.
 \subsection{Helper Functions}
@@ -128,17 +128,22 @@ The functions in Figure \ref{fig:DisplacementFunctions} are used to measure the 
 \[
 \text{Centroid}_b = \frac{3+5+5+5+3}{5} = 4.2 
 \]
-Where \( \text{Centroid}_a \) represents chord A and \(\text{Centroid}_b \) represents chord C. 
+\indent Where \( \text{Centroid}_a \) represents chord A and \(\text{Centroid}_b \) represents chord C. 
 \newline 
 \indent The \lstinline|calculate_movement_displacement(a, b)| looks to calculate the displacement between two chords by calculating the following:
 \[
 \text{Displacement} = (\text{Centroid}_a + \text{Centroid}_b)^2
 \]
-This function helps the algorithm calculate displacements between fingerings. With these helper functions explained we can now begin to explain the brute-force search algorithm that solves this problem.
+\indent These function help the algorithm's minimize the processes being called, by centralizing them. With this understood, we may begin explaining the brute-force search algorithm that solves this problem.
 \subsection{Brute-force Search}
 Brute-force search is a straightforward and exhaustive problem-solving technique that systematically explores all possible solutions to a problem to identify the optimal one. It works by generating every potential candidate in the solution space, evaluating each against a given objective or constraint, and selecting the best match. While simple to implement and guaranteed to find the correct solution, brute-force search is often computationally expensive, as the number of possibilities grows exponentially with the size of the input. 
-\newline 
 \subsubsection{Algorithm Design}
+The algorithm designed for this project, regarding brute-force search used exhaustive exploration of all possible sequences of fingerings from the chord list. There are various things we must take into consideration before actually implementing the algorithm. These are: the vector representation \( \sigma \) and it's possible values, the space \(S\) and it's size \(|S|\). Let's look at the setup of the brute-force search.
+\paragraph{Vector Representation}
+\[
+    \sigma = \{\sigma_1, \sigma_2, \sigma_3, \ldots, \sigma_n\}
+\]
+Where \(\sigma_i \in [0, K_i - 1]\) and \( K_i \) represents the number of possible fingerings of the $i^{th}$ chord in the song. So, if the resultant sigma vector of song \(C=\{c_1, c_2, c_3, \dots, c_n\}\)
 
 \subsubsection{Asymptotic Time Complexity}
 
