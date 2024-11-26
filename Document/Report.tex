@@ -138,12 +138,22 @@ The functions in Figure \ref{fig:DisplacementFunctions} are used to measure the 
 \subsection{Brute-force Search}
 Brute-force search is a straightforward and exhaustive problem-solving technique that systematically explores all possible solutions to a problem to identify the optimal one. It works by generating every potential candidate in the solution space, evaluating each against a given objective or constraint, and selecting the best match. While simple to implement and guaranteed to find the correct solution, brute-force search is often computationally expensive, as the number of possibilities grows exponentially with the size of the input. 
 \subsubsection{Algorithm Design}
-The algorithm designed for this project, regarding brute-force search used exhaustive exploration of all possible sequences of fingerings from the chord list. There are various things we must take into consideration before actually implementing the algorithm. These are: the vector representation \( \sigma \) and it's possible values, the space \(S\) and it's size \(|S|\). Let's look at the setup of the brute-force search.
+The algorithm designed for this project, regarding brute-force search used exhaustive exploration of all possible sequences of fingerings from the chord list. There are various things we must take into consideration before actually implementing the algorithm. These are: the vector representation and it's possible values, the space and it's size. Let's look at the setup of the brute-force search.
 \paragraph{Vector Representation}
 \[
     \sigma = \{\sigma_1, \sigma_2, \sigma_3, \ldots, \sigma_n\}
 \]
-Where \(\sigma_i \in [0, K_i - 1]\) and \( K_i \) represents the number of possible fingerings of the $i^{th}$ chord in the song. So, if the resultant sigma vector of song \(C=\{c_1, c_2, c_3, \dots, c_n\}\)
+\indent Where \(\sigma_i \in [0, K_i - 1]\) and \( K_i \) represents the number of possible fingerings of the $i^{th}$ chord in the song. So, if the resultant sigma vector of song \(C=\{c_1, c_2, c_3, \dots, c_n\}\)
+
+\paragraph{Vector Space}
+\[
+    S = \{0,1,2\}^{n}
+\]
+This is the upper bound of the vector space, when all chords in the song have three possible ways of being played. 
+\[
+    S = \{0\}^{n}    
+\]
+This is the lower bound of the vector space, when all chords in the song have one possible way of being played.
 
 \subsubsection{Asymptotic Time Complexity}
 
