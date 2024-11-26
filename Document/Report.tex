@@ -9,6 +9,7 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{pgfplots}
+\usepackage{float}
 \pgfplotsset{compat=1.18}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -51,7 +52,7 @@ danimari@ttu.edu}
 \maketitle
 
 \begin{abstract}
-This paper presents an algorithmic solution to optimize guitar chord transitions in musical sequences. We developed algorithms using both brute force and dynamic programming approaches to minimize left-hand displacement during chord changes. The system takes as input a sequence of chords in standard notation and a specification file containing multiple fingering positions for each chord. Our solution analyzes various possible chord positions and determines the optimal combination that minimizes the total hand movement throughout the song. The algorithms consider factors such as fret positions, string usage, and transitional distances between successive chord shapes. The results demonstrate an effective method for reducing physical strain and improving playability in guitar performances through computational optimization.
+This paper presents an algorithmic solution to optimize guitar chord transitions in musical sequences. We developed algorithms using both brute force and dynamic programming approaches to minimize left-hand displacement during chord changes. The system takes as input a sequence of chords in standard notation and a specification file containing multiple fingering positions for each chord. Our solution analyzes various possible chord positions and determines the optimal combination that minimizes the total hand movement throughout the song. The algorithms consider factors such as fret positions, string usage, and transitional distances between successive chord shapes. The results look to the difference and analyse the efficiency of the brute-force and dynamic programming approaches, based on the principal of demonstrating an effective method for reducing physical strain and improving playability in guitar performances through computational optimization.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -73,11 +74,87 @@ The challenge lies in determining the optimal sequence of chord positions that m
 
 To solve this problem, we developed two distinct algorithmic approaches. The first utilizes a brute force method, examining all possible combinations of chord positions to find the global optimum. The second employs dynamic programming techniques to efficiently compute the optimal solution by breaking down the problem into smaller subproblems and avoiding redundant calculations.
 
-Our solution takes two inputs: a sequence of chords in standard musical notation (e.g., C, Am, Dm, G7) and a specification file that details the various possible fingering positions for each chord. The specification file uses a numerical representation system where each chord is defined by a sequence of numbers representing the fret positions for each string, with special notation for open strings (0) and unused strings.
+Our solution takes two inputs: a sequence of chords in standard musical notation (e.g., C, Am, Dm, G7) and a specification dictionary that details the various possible fingering positions for each chord. The dictionary uses a numerical representation system where each chord is defined by a sequence of numbers representing the fret positions for each string, with special notation for open strings (0) and unused strings.
 
 \section{Methodology}
+The Methodology of this project, is based on explaining the problem definition, each solution, and the comparisons between both. We also look to solve the following problem:
+\newline
+\indent``Polynizer has hired the excellent students of CS-3364 to create an algorithm that allows to ﬁnd the optimal way to play the chords that the application infers, on the guitar. Speciﬁcally, we want to minimize the amount of movement made by the left hand. The algorithm takes as input the list of chords of a song in standard notation (e.g., C, Am, Dm, G7, and C) and a ﬁle specifying diﬀerent ways to play each chord, and should print on the screen how to play each chord in order to minimize the total movement of the hand over the song.''\footnote[1]{Problem Definition stated in the project definition document by Arturo Camacho.}
+\subsection{Problem Outline}
+The algorithm we are looking to develop processes a song's chord sequence in standard notation (e.g., C, Am, Dm, G7) alongside a file detailing various fingerings for each chord, with the end goal of outputting the optimal sequence of chord fingerings that minimize the total hand movement throughout the song. Before understanding how the algorithm's solve this problem we first need to understand how solutions and inputs look like.
+\newline 
+\indent Both algorithms take in the same arguments. These arguments are as follows:
+\begin{itemize}
+    \item Chord List: that represents the sequence of n chords in a song. This is what the user writes in a `.txt' file. It has the expected format of a list/set of type:
+    \( C = \{c_1, c_2, c_3, \dots, c_n\} \) where the \(c_i\) element in the list represents the \(i^{th}\) chord of the song.
+    \item Chord Dict: is a helper dictionary that contains all possible fingerings of each chord instance in the considering their offsets. Thus providing a mapping from chord to fingerings available.
+\end{itemize}
+These inputs remain consistent to both the brute-force search and the dynamic programming solution. Also, understanding the format of the inputs is required for comprehending the algorithms.
+\newline
+\indent Both algorithms return the same outputs, to answer (solve) the overall problem the user has. The outputs are:
+\begin{itemize}
+    \item Optimal Solution: this outputs represents the minimum hand displacement calculated for the list of chords being displaced. Results are in units of `frets displaced'.
+    \item Optimal Vector: this output represents the vector \(\sigma = \{\sigma_1, \sigma_2, \sigma_2, \ldots, \sigma_n\} \) where the \(\sigma_i\) element in this vector represents the fingering to be played in \(i^{th}\) chord of the song. Where \( \sigma_i \in [0, K_i] \), considering that \( K_i \) is the number of possible fingerings for the \(i^{th}\) chord - 1.\footnote[2]{A \(c_i\) with 3 fingerings has possible values \(\sigma_i \in [0, 1, 2] \); where $0$ stands for the $1^{st}$ fingering in the .csv file, $1$ stands for the $2^{nd}$ fingering in the .csv file, and $2$ stands for the $3^{rd}$ fingering in the .csv file; a \(c_i\) with 2 fingerings has possible values \(\sigma_i \in [0, 1] \), and \(c_i\) with 1 fingering has possible values \(\sigma_i \in [0] \).}
+    The \(\sigma\) represents the overall sequence of fingerings that minimize the overall hand displacement. 
+    \item Optimal Sequence: this output represents the optimal vector as actual fingerings, it was used to debug the program. 
+\end{itemize}
+The outputs represent the solution towards the problem that we look to solve. They provide the how and the value of the solution to the problem.
+\newline
+\indent Understanding the inputs and outputs of the black box (the algorithms), we need to look at some overlapping functions that are used to calculate displacement based on what the professor stated in the project definition document.
+\subsection{Helper Functions}
+The functions in this section look to provide a simple method to calculate the overall displacement between two chords. 
+\begin{figure}[H]
+\begin{lstlisting}[language=Python]
+def calculate_average_fret(x):
+    accum : int = 0
+    frets : int = 0
+    for fret in x:
+        if fret is not None:
+            accum += fret
+            frets += 1
+    return accum / frets if frets > 0 else 0.0
+def calculate_movement_displacement(a, b):
+    average_fret_a = calculate_average_fret(a)
+    average_fret_b = calculate_average_fret(b)
+    return (average_fret_a - average_fret_b)**2    
+\end{lstlisting}
+\caption{Uncommented functions in charge of calculating displacement of between fingerings, used in this project. Based, on program specifications in project definition document.}
+\label{fig:DisplacementFunctions}
+\end{figure}
+The functions in Figure \ref{fig:DisplacementFunctions} are used to measure the displacement of the left hand on a guitar when transitioning between chord positions. The \lstinline|calculate_average_fret(x)| function calculates the centroid of a chord position by adding the fret numbers of all strings where the chord is fingering, and dividing it by the number of strings used by the fingering. For example: 
+\[
+\text{Centroid}_a  = \frac{0+2+2+2+0}{5} = 1.2 
+\] 
+\[
+\text{Centroid}_b = \frac{3+5+5+5+3}{5} = 4.2 
+\]
+Where \( \text{Centroid}_a \) represents chord A and \(\text{Centroid}_b \) represents chord C. 
+\newline 
+\indent The \lstinline|calculate_movement_displacement(a, b)| looks to calculate the displacement between two chords by calculating the following:
+\[
+\text{Displacement} = (\text{Centroid}_a + \text{Centroid}_b)^2
+\]
+This function helps the algorithm calculate displacements between fingerings. With these helper functions explained we can now begin to explain the brute-force search algorithm that solves this problem.
+\subsection{Brute-force Search}
+Brute-force search is a straightforward and exhaustive problem-solving technique that systematically explores all possible solutions to a problem to identify the optimal one. It works by generating every potential candidate in the solution space, evaluating each against a given objective or constraint, and selecting the best match. While simple to implement and guaranteed to find the correct solution, brute-force search is often computationally expensive, as the number of possibilities grows exponentially with the size of the input. 
+\newline 
+\subsubsection{Algorithm Design}
 
+\subsubsection{Asymptotic Time Complexity}
 
+\subsection{Dynamic Programming}
+
+\subsubsection{Oracle Definition}
+
+\subsubsection{Recurrence Relation}
+
+\subsubsection{Algorithm Design}
+
+\subsubsection{Asymptotic Time Complexity}
+
+\subsection{Greedy Algorithm}
+
+\section{Tests}
 
 \section{Results}
 

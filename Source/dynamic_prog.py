@@ -1,4 +1,4 @@
-from Source.brute_force_bounded import calculate_movement_displacement
+from brute_force_bounded import calculate_movement_displacement
 import math
 
 def minimum_movement_dynamic_programming(chord_list, chord_dict):

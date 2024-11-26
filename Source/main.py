@@ -29,6 +29,8 @@ def main():
 
     
     # Find the optimal sequence using brute-force   
+    """
+    DEBUG:
     for chord in chord_list:
         if chord in chord_dict:
             print(f"Chord: {chord}")
@@ -36,6 +38,7 @@ def main():
                 print(f"  {key}: {value}")
         else:
             print(f"Chord: {chord} is not in the dictionary.")
+    """
 
     optimal_indices, optimal_sequence, min_cost = minimum_movement_brute_force(chord_list, chord_dict)
 
