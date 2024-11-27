@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1732665268.14231 "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" "Report.pdf" "Report" 1732665269.44704 0
-  "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" 1732665267.86157 12611 f6cc1716c2fb9a98c624a440bfe45e61 ""
+["pdflatex"] 1732671921.62948 "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" "Report.pdf" "Report" 1732671922.42987 0
+  "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" 1732671921.39572 13110 cbf5df526214bd092135b0a84a916afc ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/courier/pcrb7t.tfm" 1136768653 960 4ab65358b8406f30ef5496c8c096d22b ""
@@ -34,7 +34,9 @@
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm" 1136768653 1124 6c73e740cf17375f03eec0ee63599741 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm" 1136768653 1116 933a60c408fc0a863a92debe84b2d294 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm" 1136768653 1120 8b7d695260f3cff42e636090a8002094 ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1248133631 30251 6afa5cb1d0204815a708a080681d4674 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1248133631 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
+  "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb" 1248133631 37912 77d683123f92148345f3fc36a38d9ab1 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb" 1248133631 37166 8ab3487cbe3ab49ebce74c29ea2418db ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb" 1248133631 36281 c355509802a035cadc5f15869451dcee ""
   "/usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb" 1248133631 35469 70d41d2b9ea31d5d813066df7c99281c ""
@@ -201,8 +203,8 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1727283688 5477429 32a2a3a09e7e10c5f90c819db1b0ec36 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1727283987 3325985 6dc6d732eb0c6537dfda1492f0d1e5c6 ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "Report.aux" 1732665269.31647 2446 984966e96d8c3a0f33c1201807e90633 "pdflatex"
-  "Report.tex" 1732665267.86157 12611 f6cc1716c2fb9a98c624a440bfe45e61 ""
+  "Report.aux" 1732671922.34639 2205 4dbcfb1ec1e674b97afbf6650d8b9d37 "pdflatex"
+  "Report.tex" 1732671921.39572 13110 cbf5df526214bd092135b0a84a916afc ""
   (generated)
   "Report.aux"
   "Report.log"

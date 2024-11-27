@@ -354,7 +354,9 @@ INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/courier/pcrb8r.tfm
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/vf/adobe/courier/pcrr7t.vf
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/courier/pcrr8r.tfm
 INPUT Report.aux
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb
 INPUT /usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb

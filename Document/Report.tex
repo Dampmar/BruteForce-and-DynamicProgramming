@@ -94,7 +94,7 @@ The algorithm we are looking to develop processes a song's chord sequence in sta
 \indent Both algorithms return the same outputs, to answer (solve) the overall problem the user has. The outputs are:
 \begin{itemize}
     \item Optimal Solution: this outputs represents the minimum hand displacement calculated for the list of chords being displaced. Results are in units of `frets displaced'.
-    \item Optimal Vector: this output represents the vector \(\sigma = \{\sigma_1, \sigma_2, \sigma_2, \ldots, \sigma_n\} \) where the \(\sigma_i\) element in this vector represents the fingering to be played in \(i^{th}\) chord of the song. Where \( \sigma_i \in [0, K_i] \), considering that \( K_i \) is the number of possible fingerings for the \(i^{th}\) chord - 1.\footnote[2]{A \(c_i\) with 3 fingerings has possible values \(\sigma_i \in [0, 1, 2] \); where $0$ stands for the $1^{st}$ fingering in the .csv file, $1$ stands for the $2^{nd}$ fingering in the .csv file, and $2$ stands for the $3^{rd}$ fingering in the .csv file; a \(c_i\) with 2 fingerings has possible values \(\sigma_i \in [0, 1] \), and \(c_i\) with 1 fingering has possible values \(\sigma_i \in [0] \).}
+    \item Optimal Vector: this output represents the vector \(\sigma = \{\sigma_1, \sigma_2, \sigma_2, \ldots, \sigma_n\} \) where the \(\sigma_i\) element in this vector represents the fingering to be played in \(i^{th}\) chord of the song. Where \( \sigma_i \in [0, K_i - 1] \), considering that \( K_i \) is the number of possible fingerings for the \(i^{th}\) chord.\footnote[2]{A \(c_i\) with 3 fingerings has possible values \(\sigma_i \in [0, 1, 2] \); where $0$ stands for the $1^{st}$ fingering in the .csv file, $1$ stands for the $2^{nd}$ fingering in the .csv file, and $2$ stands for the $3^{rd}$ fingering in the .csv file; a \(c_i\) with 2 fingerings has possible values \(\sigma_i \in [0, 1] \), and \(c_i\) with 1 fingering has possible values \(\sigma_i \in [0] \).}
     The \(\sigma\) represents the overall sequence of fingerings that minimize the overall hand displacement. 
     \item Optimal Sequence: this output represents the optimal vector as actual fingerings, it was used to debug the program. 
 \end{itemize}
@@ -122,12 +122,8 @@ def calculate_movement_displacement(a, b):
 \label{fig:DisplacementFunctions}
 \end{figure}
 The functions in Figure \ref{fig:DisplacementFunctions} are used to measure the displacement of the left hand on a guitar when transitioning between chord positions. The \lstinline|calculate_average_fret(x)| function calculates the centroid of a chord position by adding the fret numbers of all strings where the chord is fingering, and dividing it by the number of strings used by the fingering. For example: 
-\[
-\text{Centroid}_a  = \frac{0+2+2+2+0}{5} = 1.2 
-\] 
-\[
-\text{Centroid}_b = \frac{3+5+5+5+3}{5} = 4.2 
-\]
+\[ \text{Centroid}_a  = \frac{0+2+2+2+0}{5} = 1.2 \] 
+\[ \text{Centroid}_b = \frac{3+5+5+5+3}{5} = 4.2 \]
 \indent Where \( \text{Centroid}_a \) represents chord A and \(\text{Centroid}_b \) represents chord C. 
 \newline 
 \indent The \lstinline|calculate_movement_displacement(a, b)| looks to calculate the displacement between two chords by calculating the following:
@@ -138,25 +134,21 @@ The functions in Figure \ref{fig:DisplacementFunctions} are used to measure the 
 \subsection{Brute-force Search}
 Brute-force search is a straightforward and exhaustive problem-solving technique that systematically explores all possible solutions to a problem to identify the optimal one. It works by generating every potential candidate in the solution space, evaluating each against a given objective or constraint, and selecting the best match. While simple to implement and guaranteed to find the correct solution, brute-force search is often computationally expensive, as the number of possibilities grows exponentially with the size of the input. 
 \subsubsection{Algorithm Design}
-The algorithm designed for this project, regarding brute-force search used exhaustive exploration of all possible sequences of fingerings from the chord list. There are various things we must take into consideration before actually implementing the algorithm. These are: the vector representation and it's possible values, the space and it's size. Let's look at the setup of the brute-force search.
-\paragraph{Vector Representation}
-\[
-    \sigma = \{\sigma_1, \sigma_2, \sigma_3, \ldots, \sigma_n\}
-\]
-\indent Where \(\sigma_i \in [0, K_i - 1]\) and \( K_i \) represents the number of possible fingerings of the $i^{th}$ chord in the song. So, if the resultant sigma vector of song \(C=\{c_1, c_2, c_3, \dots, c_n\}\)
-
-\paragraph{Vector Space}
-\[
-    S = \{0,1,2\}^{n}
-\]
-This is the upper bound of the vector space, when all chords in the song have three possible ways of being played. 
-\[
-    S = \{0\}^{n}    
-\]
-This is the lower bound of the vector space, when all chords in the song have one possible way of being played.
+The algorithm designed for this project, regarding brute-force search, used exhaustive exploration of all possible sequences of fingerings from the chord list. 
+There are various considerations, that should be looked at before evaluating the implementation of the algorithm: vector representation, its possible values, the space and its size.
+\newline 
+\noindent The vector has the same representation from the Problem Outline, that being: \[ \sigma = \{\sigma_1, \sigma_2, \sigma_3, \ldots, \sigma_n\} \] 
+\indent Where \(\sigma_i \in [0, K_i - 1]\), and where \( K_i \) represents the number of possible fingerings of the $i^{th}$ chord in the song. If the resultant vector represents the solution, the vector space can be expressed as:
+\[ S = \{0, \frac{\sum_{i=1}^{n}K_i - 1}{n} \}^{n} \]
+\indent This setup of the vector space leads it to be upper bounded by \( S = \{0,1,2\}^{n} \), considering that the worst case scenario is a song composed of chords with $3$ fingerings available. The vector space size is:
+\[ |S| = 3^{n} \].
+\indent However, considering that there is a constraint where we should only allow chord fingerings that have base fret position of 7 or less, the space $S$ is further reduced to a subset $S'$ defined as:
+\[ S' = \{\sigma \in S \mid \text{minimum fret position of \( F(C_{\sigma_i}) \)} \leq 7, \forall(i)\} \]
+\indent This leads to a reduction in the vector space by an incalculable amount but in theory it should decrease or maintain the same.
+\[ |S'| \leq |S| \]
 
 \subsubsection{Asymptotic Time Complexity}
-
+Considering the vector space 
 \subsection{Dynamic Programming}
 
 \subsubsection{Oracle Definition}
