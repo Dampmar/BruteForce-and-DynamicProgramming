@@ -1,4 +1,5 @@
 import os
+import time
 from db_parser import db_parser
 from file_parser import file_parser
 from dynamic_prog import minimum_movement_dynamic_programming
@@ -16,15 +17,20 @@ def main():
     chord_dict = db_parser(db_path)
     chord_list = file_parser(filepath)
 
+    start_time = time.time()
     optimal_indices, optimal_sequence, min_cost = minimum_movement_dynamic_programming(chord_list, chord_dict)
+    end_time = time.time()
 
     # Print if there is an optimal solution 
     if optimal_indices:
         print(f"Optimal sequence found with cost: {min_cost}")
         print("Chosen fingerings:", optimal_indices)
-        print("Optimal Sequence:", optimal_sequence)
+        # print("Optimal Sequence:", optimal_sequence)
     else:
         print("No optimal sequence found.")
+        exit(1)
+
+    print(f"Execution time: {end_time - start_time: .6f} seconds")
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,5 @@
 import os
+import time 
 from db_parser import db_parser
 from file_parser import file_parser
 
@@ -40,7 +41,9 @@ def main():
             print(f"Chord: {chord} is not in the dictionary.")
     """
 
+    start_time = time.time()
     optimal_indices, optimal_sequence, min_cost = minimum_movement_brute_force(chord_list, chord_dict)
+    end_time = time.time()
 
     # Print if there is an optimal solution 
     if optimal_indices:
@@ -49,6 +52,9 @@ def main():
         print("Optimal Sequence:", optimal_sequence)
     else:
         print("No optimal sequence found.")
+
+    print(f"Execution time: {end_time - start_time: .6f} seconds")
+
 
 if __name__ == "__main__":
     main()
