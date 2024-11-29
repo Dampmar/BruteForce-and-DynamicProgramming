@@ -87,7 +87,7 @@ The algorithm we are looking to develop processes a song's chord sequence in sta
 \begin{itemize}
     \item Chord List: that represents the sequence of n chords in a song. This is what the user writes in a `.txt' file. It has the expected format of a list/set of type:
     \( C = \{c_1, c_2, c_3, \dots, c_n\} \) where the \(c_i\) element in the list represents the \(i^{th}\) chord of the song.
-    \item Chord Dict: is a helper dictionary that contains all possible fingerings of each chord instance in the considering their offsets. Thus providing a mapping from chord to fingerings available.
+    \item Chord Dict: is a helper dictionary that contains all possible fingerings of each chord instance; considering their offsets. Thus providing a mapping from chord to fingerings available. 
 \end{itemize}
 \indent These inputs remain consistent to both the brute-force search and the dynamic programming solution. Also, understanding the format of the inputs is required for comprehending the algorithms.
 \newline
@@ -148,7 +148,10 @@ There are various considerations, that should be looked at before evaluating the
 \[ |S'| \leq |S| \]
 
 \subsubsection{Asymptotic Time Complexity}
-Considering the vector space 
+This algorithm has a time complexity of $\Theta(3^{n})$ in the worst-case scenario, implying that this algorithm takes exponential time and is fairly inefficient for medium to large input sizes.  
+
+\subsubsection{Code Implementation}
+
 \subsection{Dynamic Programming}
 
 \subsubsection{Oracle Definition}
@@ -158,6 +161,9 @@ Considering the vector space
 \subsubsection{Algorithm Design}
 
 \subsubsection{Asymptotic Time Complexity}
+
+\subsection{Code Implementation}
+
 
 \subsection{Greedy Algorithm}
 
