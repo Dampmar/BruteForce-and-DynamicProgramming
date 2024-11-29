@@ -148,10 +148,77 @@ There are various considerations, that should be looked at before evaluating the
 \[ |S'| \leq |S| \]
 
 \subsubsection{Asymptotic Time Complexity}
-This algorithm has a time complexity of $\Theta(3^{n})$ in the worst-case scenario, implying that this algorithm takes exponential time and is fairly inefficient for medium to large input sizes.  
+This algorithm has a time complexity of \(\Theta(3^{n})\) in the worst-case scenario, implying that this algorithm takes exponential time and is fairly inefficient for medium to large input sizes.  
 
 \subsubsection{Code Implementation}
+The brute force algorithm is implemented through several key components:
 
+\begin{figure}[H]
+\begin{lstlisting}[language=Python]
+def minimum_movement_brute_force(chord_list, chord_dict):
+    chord_fingerings = []
+    for chord in chord_list:
+        if chord in chord_dict:
+            fingerings = []
+            fingerings.append(chord_dict[chord]['Finger A'])
+            if 'Finger B' in chord_dict[chord]:
+                fingerings.append(chord_dict[chord]['Finger B'])
+            if 'Finger C' in chord_dict[chord]:
+                fingerings.append(chord_dict[chord]['Finger C'])
+            chord_fingerings.append(fingerings)
+\end{lstlisting}
+\caption{First part of the brute force implementation: gathering possible fingerings}
+\label{fig:BruteForceGather}
+\end{figure}
+
+The first part of the implementation (Figure \ref{fig:BruteForceGather}) focuses on gathering all possible fingerings for each chord in the sequence. The algorithm creates a list of available fingerings for each chord position, supporting up to three different fingering options (A, B, and C) per chord.
+
+\begin{figure}[H]
+\begin{lstlisting}[language=Python]
+    for idx_combination in product(*[range(len(f)) for f in chord_fingerings]):
+        sequence = [chord_fingerings[i][idx_combination[i]] 
+                   for i in range(len(chord_list))]
+        
+        cost = total_movement_cost(sequence)
+        
+        if cost < min_cost:
+            min_cost = cost
+            min_cost_sequence = sequence
+            min_cost_indices = list(idx_combination)
+\end{lstlisting}
+\caption{Core loop of the brute force implementation: evaluating all combinations}
+\label{fig:BruteForceCore}
+\end{figure}
+
+The core of the algorithm (Figure \ref{fig:BruteForceCore}) systematically evaluates every possible combination of fingerings. It uses Python's \lstinline{itertools.product} to generate all possible combinations of fingering indices. For each combination:
+\begin{itemize}
+    \item Creates a sequence of actual fingerings using the current combination
+    \item Calculates the total movement cost for this sequence
+    \item Updates the optimal solution if a lower cost is found
+\end{itemize}
+
+\begin{figure}[H]
+\begin{lstlisting}[language=Python]
+def total_movement_cost(sequence):
+    cost = 0
+    for i in range(1, len(sequence)):
+        cost += calculate_movement_displacement(sequence[i-1], sequence[i])
+    return cost 
+\end{lstlisting}
+\caption{Helper function for calculating total movement cost}
+\label{fig:BruteForceCost}
+\end{figure}
+
+The movement cost calculation (Figure \ref{fig:BruteForceCost}) iterates through the sequence of chords, summing up the displacement cost between consecutive chord positions. The first chord position serves as the starting point and doesn't contribute to the total cost.
+
+The bounded version of the algorithm adds an additional constraint check:
+\begin{lstlisting}[language=Python]
+    if any(min(fret for fret in fingering if fret is not None) > 7 
+           for fingering in sequence):
+        continue
+\end{lstlisting}
+
+This optimization ensures that only fingerings within the first seven frets are considered, which both reduces the search space and produces more practical solutions for guitar players.
 \subsection{Dynamic Programming}
 
 \subsubsection{Oracle Definition}
@@ -162,7 +229,7 @@ This algorithm has a time complexity of $\Theta(3^{n})$ in the worst-case scenar
 
 \subsubsection{Asymptotic Time Complexity}
 
-\subsection{Code Implementation}
+\subsubsection{Code Implementation}
 
 
 \subsection{Greedy Algorithm}
