@@ -220,8 +220,20 @@ The bounded version of the algorithm adds an additional constraint check:
 
 This optimization ensures that only fingerings within the first seven frets are considered, which both reduces the search space and produces more practical solutions for guitar players.
 \subsection{Dynamic Programming}
+Dynamic Programming (DP) is an algorithmic paradigm that solves complex problems by breaking them down into simpler subproblems. It is applicable when:
+\begin{itemize}
+    \item The problem can be broken down into overlapping subproblems
+    \item The solution to the problem can be constructed from solutions of its subproblems
+    \item The same subproblems are encountered multiple times when solving a larger problem
+\end{itemize}
 
 \subsubsection{Oracle Definition}
+Let \(C_{i,j}\):
+\begin{itemize}
+    \item \(i\) represents the index of the current chord in the list
+    \item \(j\) represents the index of the chosen fingering of the current chord, some may have one or more
+    \item \(C_{i,j}\) represents the minimum total movement cost from the first chord up to the i-th chord, assuming the i-th chord uses the j-th fingering
+\end{itemize}
 
 \subsubsection{Recurrence Relation}
 
@@ -232,7 +244,27 @@ This optimization ensures that only fingerings within the first seven frets are 
 \subsubsection{Code Implementation}
 
 
-\subsection{Greedy Algorithm}
+\subsection{Greedy Approach}
+A greedy algorithm was not implemented for this problem because a greedy approach cannot guarantee an optimal solution for chord sequence optimization. Here's why:
+
+\begin{itemize}
+    \item A greedy algorithm would make locally optimal choices at each step, selecting the chord fingering that minimizes movement from the current position
+    \item However, these locally optimal choices do not necessarily lead to a globally optimal solution
+    \item Consider this example:
+    \begin{itemize}
+        \item For a sequence "C-Am-G", a greedy approach might choose:
+        \item The closest fingering of Am to the initial C chord position
+        \item Then the closest G fingering to that Am position
+        \item This could result in a larger total movement than choosing a slightly "worse" initial transition that enables a much better final transition
+    \end{itemize}
+    \item The problem requires considering the entire sequence of transitions to find the true optimal solution, which is why we implemented:
+    \begin{itemize}
+        \item Brute force approach: Guarantees optimality by checking all possibilities
+        \item Dynamic programming approach: Efficiently finds the optimal solution by considering all possible combinations systematically
+    \end{itemize}
+\end{itemize}
+
+Therefore, this project focuses on the brute force and dynamic programming solutions as they are capable of finding the globally optimal solution to the chord sequence optimization problem.
 
 \section{Tests}
 
