@@ -219,29 +219,200 @@ The bounded version of the algorithm adds an additional constraint check:
 \end{lstlisting}
 
 This optimization ensures that only fingerings within the first seven frets are considered, which both reduces the search space and produces more practical solutions for guitar players.
+
 \subsection{Dynamic Programming}
-Dynamic Programming (DP) is an algorithmic paradigm that solves complex problems by breaking them down into simpler subproblems. It is applicable when:
+Dynamic Programming (DP) is an algorithmic paradigm that solves complex problems by breaking them down into simpler subproblems. For our chord transition optimization, it is applicable because:
 \begin{itemize}
-    \item The problem can be broken down into overlapping subproblems
-    \item The solution to the problem can be constructed from solutions of its subproblems
-    \item The same subproblems are encountered multiple times when solving a larger problem
+    \item Each chord transition decision affects future transitions (overlapping subproblems)
+    \item The optimal solution builds upon optimal solutions to smaller sequences (optimal substructure)
+    \item Many chord transition patterns are evaluated multiple times (memoization opportunity)
 \end{itemize}
 
 \subsubsection{Oracle Definition}
-Let \(C_{i,j}\):
+The state space and transition function are defined as:
+
 \begin{itemize}
-    \item \(i\) represents the index of the current chord in the list
-    \item \(j\) represents the index of the chosen fingering of the current chord, some may have one or more
-    \item \(C_{i,j}\) represents the minimum total movement cost from the first chord up to the i-th chord, assuming the i-th chord uses the j-th fingering
+    \item \(F(C_i)\): Set of valid fingerings for chord \(C_i\), where each fingering must have minimum fret position \(\leq 7\)
+    \item Oracle[i][f]: Dictionary storing minimum cost to reach fingering f of chord i
+    \item Solution[i][f]: Dictionary tracking previous fingering choices for solution reconstruction
 \end{itemize}
 
+A fingering f is considered valid if:
+\[ \min(\{x \in f : x \neq \text{None}\}) \leq 7 \]
+
 \subsubsection{Recurrence Relation}
+The solution is built using:
 
-\subsubsection{Algorithm Design}
+\textbf{Base Case:}
+\[ \text{Oracle}[0][f] = 0, \quad \forall f \in F(C_1) \text{ where f is valid} \]
 
-\subsubsection{Asymptotic Time Complexity}
+\textbf{Recursive Step:}
+For i from 1 to n-1:
+\[ \text{Oracle}[i][f] = \min_{p \in F(C_{i-1})} \{\text{Oracle}[i-1][p] + \text{cost}(p, f)\} \]
+where:
+\begin{itemize}
+    \item f is a valid fingering of chord i
+    \item p is a valid fingering of chord i-1
+    \item cost(p, f) is the squared displacement between fingerings
+\end{itemize}
+
+\textbf{Final Solution:}
+\[ \min_{f \in F(C_n)} \text{Oracle}[n-1][f] \]
+
+\subsubsection{Algorithm Implementation}
+The implementation consists of four main components:
+
+\begin{enumerate}
+\item \textbf{Initialization}:
+\begin{itemize}
+    \item Collects valid fingerings for each chord from the chord dictionary
+    \item Creates Oracle and Solution dictionaries for each chord position
+    \item Sets base case costs for first chord's valid fingerings
+\end{itemize}
+
+\item \textbf{Oracle Construction}:
+\begin{lstlisting}[language=Python]
+# Fill the Oracle
+for i in range(1, n):
+    for f, fingering in enumerate(chord_fingerings[i]):
+        if not is_valid_fingering(fingering):
+            continue
+        Oracle[i][f] = float('inf')
+        for f_prev, prev_fingering in enumerate(chord_fingerings[i - 1]):
+            if not is_valid_fingering(prev_fingering):
+                continue
+            cost = Oracle[i - 1][f_prev] + calculate_movement_displacement(prev_fingering, fingering)
+            if cost < Oracle[i][f]:
+                Oracle[i][f] = cost
+                Solution[i][f] = f_prev
+\end{lstlisting}
+
+\item \textbf{Solution Reconstruction}:
+\begin{itemize}
+    \item Identifies minimum cost fingering for final chord
+    \item Traces back through Solution dictionary to build optimal sequence
+    \item Returns fingering indices and actual fingerings
+\end{itemize}
+
+\item \textbf{Cost Normalization}:
+\[ \text{final\_cost} = \sqrt{\text{min\_cost}} \]
+\end{enumerate}
+
+\subsubsection{Time Complexity}
+The algorithm achieves \(\Theta(n \times K^2)\) time complexity where:
+\begin{itemize}
+    \item n is the number of chords in the sequence
+    \item K is the maximum number of valid fingerings for any chord
+\end{itemize}
+
+This is significantly more efficient than the brute force approach's \(\Theta(3^n)\) complexity, as it:
+\begin{itemize}
+    \item Eliminates redundant calculations through memoization
+    \item Prunes invalid fingering combinations early
+    \item Builds the solution incrementally using optimal substructure
+\end{itemize}
 
 \subsubsection{Code Implementation}
+The dynamic programming algorithm is implemented through several key components:
+
+\begin{enumerate}
+\item \textbf{Helper Functions}:
+\begin{lstlisting}[language=Python]
+def is_valid_fingering(fingering):
+    valid_frets = [fret for fret in fingering if fret is not None]
+    if not valid_frets:
+        return False
+    return min(valid_frets) <= 7
+\end{lstlisting}
+This validation function ensures that:
+\begin{itemize}
+    \item Only considers frets that are actually used (not None)
+    \item Returns False if no valid frets exist
+    \item Enforces the constraint that minimum fret position must be \(\leq 7\)
+\end{itemize}
+
+\item \textbf{Fingering Collection}:
+\begin{lstlisting}[language=Python]
+chord_fingerings = []
+for chord in chord_list:
+    if chord in chord_dict:
+        fingerings = []
+        for key in ['Finger A', 'Finger B', 'Finger C']:
+            if key in chord_dict[chord]:
+                fingering = chord_dict[chord][key]
+                fingerings.append(fingering)
+\end{lstlisting}
+This initialization phase:
+\begin{itemize}
+    \item Processes each chord in the input sequence
+    \item Collects up to three possible fingerings (A, B, C) per chord
+    \item Validates chord existence in the dictionary
+\end{itemize}
+
+\item \textbf{DP Table Construction}:
+\begin{lstlisting}[language=Python]
+n = len(chord_list)
+Oracle = [{} for _ in range(n)]  # Each entry is a dictionary
+Solution = [{} for _ in range(n)]  # Tracks previous indices
+
+# Initialize base case
+for f, fingering in enumerate(chord_fingerings[0]):
+    if is_valid_fingering(fingering):
+        Oracle[0][f] = 0
+\end{lstlisting}
+The initialization creates:
+\begin{itemize}
+    \item Two arrays of dictionaries for Oracle and Solution tracking
+    \item Sets base case costs to 0 for valid first chord fingerings
+\end{itemize}
+
+\item \textbf{Core DP Algorithm}:
+\begin{lstlisting}[language=Python]
+for i in range(1, n):
+    for f, fingering in enumerate(chord_fingerings[i]):
+        if not is_valid_fingering(fingering):
+            continue
+        Oracle[i][f] = float('inf')
+        for f_prev, prev_fingering in enumerate(chord_fingerings[i - 1]):
+            if not is_valid_fingering(prev_fingering):
+                continue
+            cost = Oracle[i - 1][f_prev] + calculate_movement_displacement(
+                prev_fingering, fingering)
+            if cost < Oracle[i][f]:
+                Oracle[i][f] = cost
+                Solution[i][f] = f_prev
+\end{lstlisting}
+The main algorithm:
+\begin{itemize}
+    \item Iterates through each chord position
+    \item For each valid current fingering
+    \item Considers all valid previous fingerings
+    \item Updates minimum cost and solution path
+\end{itemize}
+
+\item \textbf{Solution Reconstruction}:
+\begin{lstlisting}[language=Python]
+sequence = []
+indexes = []
+f = min_cost_index
+for i in range(n - 1, -1, -1):
+    sequence.append(chord_fingerings[i][f])
+    indexes.append(f)
+    f = Solution[i].get(f, None)
+sequence.reverse()
+indexes.reverse()
+\end{lstlisting}
+The reconstruction process:
+\begin{itemize}
+    \item Starts from the optimal final fingering
+    \item Traces back through the Solution dictionary
+    \item Builds both fingering sequence and index sequence
+    \item Reverses sequences to get correct order
+\end{itemize}
+\end{enumerate}
+
+The implementation uses dictionaries instead of traditional arrays to efficiently handle varying numbers of valid fingerings per chord. The final cost is normalized using square root to maintain consistency with the problem's distance metric.
+
 
 
 \subsection{Greedy Approach}
@@ -267,9 +438,107 @@ A greedy algorithm was not implemented for this problem because a greedy approac
 Therefore, this project focuses on the brute force and dynamic programming solutions as they are capable of finding the globally optimal solution to the chord sequence optimization problem.
 
 \section{Tests}
+To evaluate the performance and effectiveness of both algorithms, we conducted tests using three musical pieces:
+
+\begin{itemize}
+    \item Luis Miguel Song
+    \item Catch the Rainbow
+\end{itemize}
+
+\subsection{Test Setup}
+Each algorithm was tested with different chord sequence lengths to analyze their scalability and performance characteristics:
+
+\subsubsection{Brute Force Test Cases}
+\begin{itemize}
+    \item 1 chord sequence (first chord only)
+    \item 5 chord sequence (first five chords)
+    \item 10 chord sequence (first ten chords)
+    \item 15 chord sequence (first fifteen chords)
+\end{itemize}
+
+\subsubsection{Dynamic Programming Test Cases}
+\begin{itemize}
+    \item 10 chord sequence (first ten chords)
+    \item 20 chord sequence (first twenty chords)
+    \item 30 chord sequence (first thirty chords)
+    \item 40 chord sequence (first forty chords)
+\end{itemize}
 
 \section{Results}
+\subsection{Brute Force Analysis - Luis Miguel Song}
 
+\begin{table}[H]
+\centering
+\caption{Brute Force Execution Times - Luis Miguel Song}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
+\hline
+1 & 0.000000 \\
+5 & 0.000999 \\
+10 & 0.025002 \\
+15 & 0.556138 \\
+20 & 67.545722 \\
+\hline
+\end{tabular}
+\label{tab:luismiguel_bf_times}
+\end{table}
+
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel={Number of Chords},
+    ylabel={Execution Time (seconds)},
+    title={Brute Force Execution Time - Luis Miguel Song},
+    grid=major,
+    legend pos=north west,
+    ymode=log,  % Using logarithmic scale for better visualization
+    xtick={1,5,10,15,20},
+    xmin=0,
+    xmax=21,
+    ymin=0.0000001,
+    ymax=100
+]
+\addplot[color=blue,mark=*] coordinates {
+    (1,0.000000)
+    (2,0.000000)
+    (3,0.000000)
+    (4,0.000000)
+    (5,0.001065)
+    (6,0.001991)
+    (7,0.001997)
+    (8,0.004937)
+    (9,0.010312)
+    (10,0.021750)
+    (11,0.069454)
+    (12,0.135738)
+    (13,0.270776)
+    (14,0.561291)
+    (15,0.555421)
+    (16,1.209936)
+    (17,3.419934)
+    (18,6.955780)
+    (19,22.249811)
+    (20,65.967618)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Exponential growth of execution time with increasing chord sequence length}
+\label{fig:luismiguel_bf_graph}
+\end{figure}
+
+\textbf{Analysis of Results:}
+The execution time results demonstrate the exponential nature of the brute force algorithm:
+
+\begin{itemize}
+    \item \textbf{Single Chord (1):} Negligible execution time (0.000000s), as only one fingering combination needs to be evaluated
+    \item \textbf{Five Chords (5):} Slight increase in execution time (0.000999s), still maintaining efficient performance
+    \item \textbf{Ten Chords (10):} Notable jump to 0.025002s, showing the beginning of exponential growth
+    \item \textbf{Fifteen Chords (15):} Significant increase to 0.556138s, approximately 22 times slower than the 10-chord sequence
+    \item \textbf{Twenty Chords (20):} Execution time of 67.545722s, demonstrating the impracticality of brute force for longer sequences
+\end{itemize}
+
+The graph clearly shows the exponential growth pattern, with execution time increasing dramatically as the number of chords increases. This aligns with the algorithm's theoretical time complexity of \(\Theta(3^n)\), where n is the number of chords. The steep curve between 10 and 15 chords particularly highlights why brute force becomes impractical for longer sequences.
 
 \section{Conclusion}
 
