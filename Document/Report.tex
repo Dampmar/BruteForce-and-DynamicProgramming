@@ -454,18 +454,19 @@ Each algorithm was tested with different chord sequence lengths to analyze their
     \item 5 chord sequence (first five chords)
     \item 10 chord sequence (first ten chords)
     \item 15 chord sequence (first fifteen chords)
+    \item 20 chord sequence (first twenty chords)
 \end{itemize}
 
 \subsubsection{Dynamic Programming Test Cases}
 \begin{itemize}
-    \item 10 chord sequence (first ten chords)
-    \item 20 chord sequence (first twenty chords)
-    \item 30 chord sequence (first thirty chords)
-    \item 40 chord sequence (first forty chords)
+    \item 60 chord sequence (first sixty chords)
+    \item 80 chord sequence (first eighty chords)
+    \item 100 chord sequence (first one hundred chords)
+    \item 120 chord sequence (first one hundred twenty chords)
 \end{itemize}
 
 \section{Results}
-\subsection{Brute Force Analysis - Luis Miguel Song}
+\subsection{Analysis - Luis Miguel Song}
 
 \begin{table}[H]
 \centering
@@ -475,13 +476,24 @@ Each algorithm was tested with different chord sequence lengths to analyze their
 \textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
 \hline
 1 & 0.000000 \\
-5 & 0.000999 \\
-10 & 0.025002 \\
-15 & 0.556138 \\
-20 & 67.545722 \\
+5 & 0.001065 \\
+10 & 0.021750 \\
+15 & 0.555421 \\
+20 & 65.967618 \\
 \hline
 \end{tabular}
-\label{tab:luismiguel_bf_times}
+\caption{Dynamic Programming Execution Times - Luis Miguel Song}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
+\hline
+60 & 0.001003 \\
+80 & 0.001509 \\
+100 & 0.001005 \\
+120 & 0.000977 \\
+\hline
+\end{tabular}
+\label{tab:luismiguel_analysis_times}
 \end{table}
 
 \begin{figure}[H]
@@ -489,21 +501,18 @@ Each algorithm was tested with different chord sequence lengths to analyze their
 \begin{axis}[
     xlabel={Number of Chords},
     ylabel={Execution Time (seconds)},
-    title={Brute Force Execution Time - Luis Miguel Song},
+    title={Algorithm Execution Time Comparison - Luis Miguel Song},
     grid=major,
     legend pos=north west,
     ymode=log,  % Using logarithmic scale for better visualization
-    xtick={1,5,10,15,20},
-    xmin=0,
-    xmax=21,
+    xtick={5,20,40,60,80,100,120},
+    xmin=5,
+    xmax=125,
     ymin=0.0000001,
-    ymax=100
+    ymax=100,
+    legend entries={Brute Force, Dynamic Programming}
 ]
 \addplot[color=blue,mark=*] coordinates {
-    (1,0.000000)
-    (2,0.000000)
-    (3,0.000000)
-    (4,0.000000)
     (5,0.001065)
     (6,0.001991)
     (7,0.001997)
@@ -521,6 +530,12 @@ Each algorithm was tested with different chord sequence lengths to analyze their
     (19,22.249811)
     (20,65.967618)
 };
+\addplot[color=red,mark=*] coordinates {
+    (60,0.001003)
+    (80,0.001509)
+    (100,0.001005)
+    (120,0.000977)
+};
 \end{axis}
 \end{tikzpicture}
 \caption{Exponential growth of execution time with increasing chord sequence length}
@@ -528,17 +543,142 @@ Each algorithm was tested with different chord sequence lengths to analyze their
 \end{figure}
 
 \textbf{Analysis of Results:}
-The execution time results demonstrate the exponential nature of the brute force algorithm:
+The execution time results demonstrate the exponential nature of the brute force algorithm (Blue line):
 
 \begin{itemize}
     \item \textbf{Single Chord (1):} Negligible execution time (0.000000s), as only one fingering combination needs to be evaluated
-    \item \textbf{Five Chords (5):} Slight increase in execution time (0.000999s), still maintaining efficient performance
-    \item \textbf{Ten Chords (10):} Notable jump to 0.025002s, showing the beginning of exponential growth
-    \item \textbf{Fifteen Chords (15):} Significant increase to 0.556138s, approximately 22 times slower than the 10-chord sequence
-    \item \textbf{Twenty Chords (20):} Execution time of 67.545722s, demonstrating the impracticality of brute force for longer sequences
+    \item \textbf{Five Chords (5):} Slight increase in execution time (0.0.001065s), still maintaining efficient performance
+    \item \textbf{Ten Chords (10):} Notable jump to 0.021750s, showing the beginning of exponential growth
+    \item \textbf{Fifteen Chords (15):} Significant increase to 0.555421s, approximately 22 times slower than the 10-chord sequence
+    \item \textbf{Twenty Chords (20):} Execution time of 65.967618s, demonstrating the impracticality of brute force for longer sequences
 \end{itemize}
 
 The graph clearly shows the exponential growth pattern, with execution time increasing dramatically as the number of chords increases. This aligns with the algorithm's theoretical time complexity of \(\Theta(3^n)\), where n is the number of chords. The steep curve between 10 and 15 chords particularly highlights why brute force becomes impractical for longer sequences.
+
+In contrast, the dynamic programming solution (Red line) demonstrates remarkably consistent performance:
+
+\begin{itemize}
+    \item \textbf{Sixty Chords (60):} Execution time of 0.001003s
+    \item \textbf{Eighty Chords (80):} Slight increase to 0.001509s
+    \item \textbf{One Hundred Chords (100):} Maintained efficiency at 0.001005s
+    \item \textbf{One Hundred Twenty Chords (120):} Consistent performance at 0.000977s
+\end{itemize}
+
+The dynamic programming results showcase several key advantages:
+
+\begin{itemize}
+    \item \textbf{Scalability:} The algorithm maintains near-constant execution times even as the input size triples from 40 to 120 chords
+    \item \textbf{Efficiency:} Processing 120 chords takes approximately the same time as the brute force approach needs for just 5 chords
+    \item \textbf{Consistency:} The slight variations in execution time (between 0.000977s and 0.001509s) demonstrate stable performance regardless of input size
+    \item \textbf{Practical Applicability:} The algorithm's ability to handle large chord sequences in milliseconds makes it suitable for real-world applications
+\end{itemize}
+
+These results validate the theoretical time complexity of \(\Theta(n \times K^2)\) for the dynamic programming solution, where n is the number of chords and K is the maximum number of fingerings per chord. The nearly flat line in the graph demonstrates how this polynomial-time complexity translates to practical performance benefits, especially when compared to the exponential growth of the brute force approach.
+
+\subsection{Analysis - Halsey Song}
+
+\begin{table}[H]
+\centering
+\caption{Brute Force Execution Times - Halsey Song}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
+\hline
+5 & 0.001006 \\
+10 & 0.006088 \\
+15 & 0.236356 \\
+20 & 19.808614 \\
+\hline
+\end{tabular}
+\caption{Dynamic Programming Execution Times - Halsey Song}
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
+\hline
+60 & 0.001021 \\
+80 & 0.000958 \\
+100 & 0.001006 \\
+120 & 0.001001 \\
+\hline
+\end{tabular}
+\label{tab:halsey_analysis_times}
+\end{table}
+
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[
+    xlabel={Number of Chords},
+    ylabel={Execution Time (seconds)},
+    title={Algorithm Execution Time Comparison - Halsey Song},
+    grid=major,
+    legend pos=north west,
+    ymode=log,
+    xtick={5,20,40,60,80,100,120},
+    xmin=5,
+    xmax=125,
+    ymin=0.0000001,
+    ymax=100,
+    legend entries={Brute Force, Dynamic Programming}
+]
+\addplot[color=blue,mark=*] coordinates {
+    (5,0.001006)
+    (6,0.001009)
+    (7,0.001072)
+    (8,0.002550)
+    (9,0.007499)
+    (10,0.006088)
+    (11,0.012514)
+    (12,0.029697)
+    (13,0.027930)
+    (14,0.084792)
+    (15,0.236356)
+    (16,0.242440)
+    (17,0.756384)
+    (18,2.156566)
+    (19,6.638306)
+    (20,19.808614)
+};
+\addplot[color=red,mark=*] coordinates {
+    (60,0.001021)
+    (80,0.000958)
+    (100,0.001006)
+    (120,0.001001)
+};
+\end{axis}
+\end{tikzpicture}
+\caption{Execution time comparison for Halsey song analysis}
+\label{fig:halsey_bf_graph}
+\end{figure}
+
+\textbf{Analysis of Results:}
+The execution time results for the Halsey song demonstrate similar patterns to the previous analysis:
+
+\begin{itemize}
+    \item \textbf{Brute Force Performance:}
+    \begin{itemize}
+        \item \textbf{Five Chords:} Very efficient at 0.001006s
+        \item \textbf{Ten Chords:} Modest increase to 0.006088s
+        \item \textbf{Fifteen Chords:} Significant jump to 0.236356s
+        \item \textbf{Twenty Chords:} Major increase to 19.808614s
+    \end{itemize}
+    
+    \item \textbf{Dynamic Programming Performance:}
+    \begin{itemize}
+        \item Consistently efficient performance across all test cases
+        \item Execution times remain stable between 0.000958s and 0.001021s
+        \item No significant performance degradation even at 120 chords
+    \end{itemize}
+\end{itemize}
+
+The results show that while the brute force approach still exhibits exponential growth, it performs somewhat better on this song compared to the Luis Miguel analysis. This could be due to:
+
+\begin{itemize}
+    \item Different chord complexity in the sequence
+    \item Varying number of possible fingerings per chord
+    \item More efficient pruning of invalid combinations
+\end{itemize}
+
+The dynamic programming solution maintains its superior performance characteristics, processing the entire 120-chord sequence in approximately the same time that the brute force approach needs for 5-6 chords. This further validates the algorithm's practical applicability for real-world use cases.
 
 \section{Conclusion}
 
