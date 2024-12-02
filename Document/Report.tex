@@ -171,7 +171,7 @@ def minimum_movement_brute_force(chord_list, chord_dict):
 \label{fig:BruteForceGather}
 \end{figure}
 
-The first part of the implementation (Figure \ref{fig:BruteForceGather}) focuses on gathering all possible fingerings for each chord in the sequence. The algorithm creates a list of available fingerings for each chord position, supporting up to three different fingering options (A, B, and C) per chord.
+The first part of the implementation (Figure \ref{fig:BruteForceGather}) focuses on gathering all possible fingerings for each chord in the sequence. The algorithm creates a list of available fingerings for each chord position, supporting up to three different fingering options (A, B, and C) per chord. 
 
 \begin{figure}[H]
 \begin{lstlisting}[language=Python]
@@ -190,7 +190,7 @@ The first part of the implementation (Figure \ref{fig:BruteForceGather}) focuses
 \label{fig:BruteForceCore}
 \end{figure}
 
-The core of the algorithm (Figure \ref{fig:BruteForceCore}) systematically evaluates every possible combination of fingerings. It uses Python's \lstinline{itertools.product} to generate all possible combinations of fingering indices. For each combination:
+The core of the algorithm (Figure \ref{fig:BruteForceCore}) systematically evaluates every possible combination of fingerings. It uses Python's \lstinline{itertools.product} to generate all possible combinations of fingering indices for the song. For each combination:
 \begin{itemize}
     \item Creates a sequence of actual fingerings using the current combination
     \item Calculates the total movement cost for this sequence
@@ -209,7 +209,7 @@ def total_movement_cost(sequence):
 \label{fig:BruteForceCost}
 \end{figure}
 
-The movement cost calculation (Figure \ref{fig:BruteForceCost}) iterates through the sequence of chords, summing up the displacement cost between consecutive chord positions. The first chord position serves as the starting point and doesn't contribute to the total cost.
+The movement cost calculation (Figure \ref{fig:BruteForceCost}) iterates through the sequence of chords, summing up the displacement cost between consecutive chord positions. The first chord position serves as the starting point and doesn't contribute to the total cost.\footnote{The resultant minimum cost is returned as the square root of the calculated cost to normalize the value into frets displaced.}
 
 The bounded version of the algorithm adds an additional constraint check:
 \begin{lstlisting}[language=Python]
@@ -228,36 +228,36 @@ Dynamic Programming (DP) is an algorithmic paradigm that solves complex problems
     \item Many chord transition patterns are evaluated multiple times (memoization opportunity)
 \end{itemize}
 
+By leveraging on these characteristics, we can systematically model and solve the problem. A key step in this process if defining the \textbf{Oracle} - the table that encapsulates the state space and transition rules of the problem.
+
 \subsubsection{Oracle Definition}
-The state space and transition function are defined as:
-
+The Oracle is defined as: \(C_{i,j}\) is equal as the minimum total movement cost from the first chord to the \(i^{th}\) chord; assuming the \(i^{th}\) is being played with the \(j^{th}\) fingering.
 \begin{itemize}
-    \item \(F(C_i)\): Set of valid fingerings for chord \(C_i\), where each fingering must have minimum fret position \(\leq 7\)
-    \item Oracle[i][f]: Dictionary storing minimum cost to reach fingering f of chord i
-    \item Solution[i][f]: Dictionary tracking previous fingering choices for solution reconstruction
+    \item \(i\) represents the index of the current chord in the list.
+    \item \(j\) represents the index of the chosen fingering of the current chord.
 \end{itemize}
 
-A fingering f is considered valid if:
-\[ \min(\{x \in f : x \neq \text{None}\}) \leq 7 \]
+It is important to state that a fingering \(f\) for any chord is only considered and used in the Oracle if:
+\[ \min(\{\forall x \in f \mid x \neq \text{None}\}) \leq 7 \]
 
-\subsubsection{Recurrence Relation}
-The solution is built using:
+Considering the setup we may begin to demonstrate the logic for each of the steps that fill up the Oracle and provide us with the solution. 
 
-\textbf{Base Case:}
-\[ \text{Oracle}[0][f] = 0, \quad \forall f \in F(C_1) \text{ where f is valid} \]
-
-\textbf{Recursive Step:}
-For i from 1 to n-1:
-\[ \text{Oracle}[i][f] = \min_{p \in F(C_{i-1})} \{\text{Oracle}[i-1][p] + \text{cost}(p, f)\} \]
-where:
+\subsubsection{Dynamic Programming Steps}
 \begin{itemize}
-    \item f is a valid fingering of chord i
-    \item p is a valid fingering of chord i-1
-    \item cost(p, f) is the squared displacement between fingerings
+    \item \textbf{Base Step}: 
+    \[ C_{1,f} = 0 \text{, \(\forall f\) where \(f\) is a fingering of chord \(c_1\) }\]
+
+    \item \textbf{Recursive Step}: 
+    \[ C_{i,f} = \min_{p \in [1, K_{i-1}]}(C_{i-1, p} + cost(a, b))\]
+    Where \(a\) is the fingering \(p\) of chord \(c_{i-1}\) and \(b\) is the fingering \(f\) of chord \(c_i\), and \(cost(a,b)\) is the cost of the displacement. Also, \(K_{i-1}\) represents the number of possible fingerings of chord \(c_{i-1}\). 
+
+    \item \textbf{Goal}:
+    \[ \min_{p \in [1, K_{n}]}(C_{n, p})\]
 \end{itemize}
 
-\textbf{Final Solution:}
-\[ \min_{f \in F(C_n)} \text{Oracle}[n-1][f] \]
+It is important to understand that indices are (for practical purposes) being displayed from 1 to $n$ to better understand the math behind the Oracle. In practice these are indices in Python ranging from 0 to $n-1$. Slight alterations take place to comply with the language, but the logic behind the dynamic programming has the same format.
+
+Utilizing the Oracle definition and the steps defined above, the implementation will be discussed in the following subsection.
 
 \subsubsection{Algorithm Implementation}
 The implementation consists of four main components:
@@ -304,6 +304,8 @@ The algorithm achieves \(\Theta(n \times K^2)\) time complexity where:
     \item n is the number of chords in the sequence
     \item K is the maximum number of valid fingerings for any chord
 \end{itemize}
+
+We must comprehend that K in the worst-case scenario is a constant $3$ so for the worst-case scenario the time complexity is of \(\Theta(n \times 9) \) which means that this algorithm takes linear time to execute.
 
 This is significantly more efficient than the brute force approach's \(\Theta(3^n)\) complexity, as it:
 \begin{itemize}
@@ -438,130 +440,212 @@ A greedy algorithm was not implemented for this problem because a greedy approac
 Therefore, this project focuses on the brute force and dynamic programming solutions as they are capable of finding the globally optimal solution to the chord sequence optimization problem.
 
 \section{Tests}
-To evaluate the performance and effectiveness of both algorithms, we conducted tests using three musical pieces:
+To evaluate the performance and effectiveness of both algorithms, we conducted tests using three musical pieces provided by the professor:
 
 \begin{itemize}
-    \item Luis Miguel Song
-    \item Catch the Rainbow
+    \item Luis Miguel - El dia que me quieras
+    \item Halsey - Graveyard
+    \item Toto - Hold The Line
 \end{itemize}
 
 \subsection{Test Setup}
 Each algorithm was tested with different chord sequence lengths to analyze their scalability and performance characteristics:
 
 \subsubsection{Brute Force Test Cases}
+Brute-force search was tested utilizing increments of 4 up to 20 chords in a sequence, an example of this sequence:
 \begin{itemize}
-    \item 1 chord sequence (first chord only)
-    \item 5 chord sequence (first five chords)
-    \item 10 chord sequence (first ten chords)
-    \item 15 chord sequence (first fifteen chords)
-    \item 20 chord sequence (first twenty chords)
+    \item 4 chords
+    \item 8 chords
+    \item 12 chords
+    \item 16 chords
+    \item 20 chords
 \end{itemize}
 
 \subsubsection{Dynamic Programming Test Cases}
-\begin{itemize}
-    \item 60 chord sequence (first sixty chords)
-    \item 80 chord sequence (first eighty chords)
-    \item 100 chord sequence (first one hundred chords)
-    \item 120 chord sequence (first one hundred twenty chords)
-\end{itemize}
+Dynamic Programming being a better performing algorithm was tested utilizing increments of 40 starting at 20, up to the maximum input size of a song; and also by utilizing the increments of Brute-Force Search. Such as, the following in Toto - Hold The Line. 
 
 \section{Results}
-\subsection{Analysis - Luis Miguel Song}
+Before delving into the discussion of results and conclusions, it is important to state that both the brute-force search and the dynamic programming algorithm's have been tested and compared to the results provided by Dr. Camacho as a proof for proper behavior. For all test cases in this section, the minimum cost is the same as the one provided by the professor. 
 
+\subsection{Analysis of Toto's - Hold The Line}
 \begin{table}[H]
-\centering
-\caption{Brute Force Execution Times - Luis Miguel Song}
-\begin{tabular}{|c|c|}
-\hline
-\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
-\hline
-1 & 0.000000 \\
-5 & 0.001065 \\
-10 & 0.021750 \\
-15 & 0.555421 \\
-20 & 65.967618 \\
-\hline
-\end{tabular}
-\caption{Dynamic Programming Execution Times - Luis Miguel Song}
-\begin{tabular}{|c|c|}
-\hline
-\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
-\hline
-60 & 0.001003 \\
-80 & 0.001509 \\
-100 & 0.001005 \\
-120 & 0.000977 \\
-\hline
-\end{tabular}
-\label{tab:luismiguel_analysis_times}
+    \centering 
+    \caption{Brute-Force Search Execution Times - Hold The Line}
+    \renewcommand{\arraystretch}{1.2} % Increases row height for readability
+    \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
+    \begin{tabular}{|c|c|}
+        \hline 
+        \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
+        \hline 
+        4 & 0.000231 \\
+        \hline 
+        8 & 0.002293 \\
+        \hline 
+        12 & 0.106462 \\
+        \hline 
+        16 & 1.525553 \\
+        \hline 
+        20 & 27.776092 \\
+        \hline
+    \end{tabular}
 \end{table}
 
+\begin{table}[H]
+    \centering
+    \caption{Dynamic Programming Execution Times - Hold The Line}
+    \renewcommand{\arraystretch}{1.2} % Increases row height for readability
+    \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
+    \begin{tabular}{|c|c|}
+        \hline 
+        \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
+        \hline 
+        4 & 0.000107 \\
+        \hline 
+        8 & 0.000142 \\
+        \hline 
+        12 & 0.000177 \\
+        \hline 
+        16 & 0.000221 \\
+        \hline 
+        20 & 0.000283 \\
+        \hline 
+        60 & 0.000652 \\
+        \hline 
+        100 & 0.000964 \\
+        \hline
+        140 & 0.001265 \\
+        \hline
+        180 & 0.001642 \\
+        \hline
+        206 & 0.001821 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Considering the results in both of the tables in here, a plot may be developed as follows, to indicate correlations between the input size and the execution time for these two algorithms.
+
 \begin{figure}[H]
-\begin{tikzpicture}
-\begin{axis}[
-    xlabel={Number of Chords},
-    ylabel={Execution Time (seconds)},
-    title={Algorithm Execution Time Comparison - Luis Miguel Song},
-    grid=major,
-    legend pos=north west,
-    ymode=log,  % Using logarithmic scale for better visualization
-    xtick={5,20,40,60,80,100,120},
-    xmin=5,
-    xmax=125,
-    ymin=0.0000001,
-    ymax=100,
-    legend entries={Brute Force, Dynamic Programming}
-]
-\addplot[color=blue,mark=*] coordinates {
-    (5,0.001065)
-    (6,0.001991)
-    (7,0.001997)
-    (8,0.004937)
-    (9,0.010312)
-    (10,0.021750)
-    (11,0.069454)
-    (12,0.135738)
-    (13,0.270776)
-    (14,0.561291)
-    (15,0.555421)
-    (16,1.209936)
-    (17,3.419934)
-    (18,6.955780)
-    (19,22.249811)
-    (20,65.967618)
-};
-\addplot[color=red,mark=*] coordinates {
-    (60,0.001003)
-    (80,0.001509)
-    (100,0.001005)
-    (120,0.000977)
-};
-\end{axis}
-\end{tikzpicture}
-\caption{Exponential growth of execution time with increasing chord sequence length}
-\label{fig:luismiguel_bf_graph}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel={Number of Chords (n)},
+            ylabel={Execution Time (seconds)},
+            xtick={4,20,60,100,140,180,200},
+            title={Algorithm Execution Time vs. Input Size - Hold The Line},
+            grid=major,
+            legend pos=north east,
+            legend entries={Brute-Force Search, Dynamic Programming},
+            ymode=log
+        ]
+        % Brute-Force Search data
+        \addplot[color=blue, mark=*] coordinates {
+            (4, 0.000231) (8, 0.002293) (12, 0.106462) (16, 1.525553) (20, 27.776092)
+        }; 
+        % Dynamic Programming data
+        \addplot[color=red, mark=*] coordinates {
+            (4, 0.000107) (8, 0.000142) (12, 0.000177) (16, 0.000221) (20, 0.000283) 
+            (60, 0.000652) (100, 0.000964) (140, 0.001265) (180, 0.001642) (206, 0.001821)
+        };
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Execution Time Comparison Between Brute-Force Search and Dynamic Programming - Hold The Line}
+    \label{fig:execution-time}
 \end{figure}
 
-\textbf{Analysis of Results:}
-The execution time results demonstrate the exponential nature of the brute force algorithm (Blue line):
+\textbf{Results Discussion}: The plot in Figure \ref{fig:execution-time} demonstrates consistency with the execution times for Brute-Force Search and the Dynamic Programming respective algorithms. 
 
-\begin{itemize}
-    \item \textbf{Single Chord (1):} Negligible execution time (0.000000s), as only one fingering combination needs to be evaluated
-    \item \textbf{Five Chords (5):} Slight increase in execution time (0.0.001065s), still maintaining efficient performance
-    \item \textbf{Ten Chords (10):} Notable jump to 0.021750s, showing the beginning of exponential growth
-    \item \textbf{Fifteen Chords (15):} Significant increase to 0.555421s, approximately 22 times slower than the 10-chord sequence
-    \item \textbf{Twenty Chords (20):} Execution time of 65.967618s, demonstrating the impracticality of brute force for longer sequences
-\end{itemize}
+Were Brute-Force Search is clearly shown to have an exponential growth pattern, with execution times increasing as the number of chords increases. This aligns with the algorithm's theoretical time complexity of $\Theta(3^{n})$, where $n$ is the input size. The steep curve between 12 and 16.
 
+Meanwhile, Dynamic Programming Contains a slight linear increase as the input size increases maintaining consistency between the theoretical time complexity of this algorithm of $\Theta(n)$. 
+
+\subsection{Analysis Luis Miguel's - El Dia Que Me Quieras}
+\begin{table}[H]
+    \centering 
+    \caption{Brute-Force Search Execution Times - El Dia Que Me Quieras}
+    \renewcommand{\arraystretch}{1.2} % Increases row height for readability
+    \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
+    \begin{tabular}{|c|c|}
+        \hline 
+        \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
+        \hline 
+        4 & 0.000349 \\
+        \hline 
+        8 & 0.008179 \\
+        \hline 
+        12 & 0.105452 \\
+        \hline 
+        16 & 0.806655 \\
+        \hline 
+        20 & 46.038268 \\
+        \hline
+    \end{tabular}
+\end{table}
+\begin{table}[H]
+    \centering
+    \caption{Dynamic Programming Execution Times - El Dia Que Me Quieras}
+    \renewcommand{\arraystretch}{1.2} % Increases row height for readability
+    \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
+    \begin{tabular}{|c|c|}
+        \hline 
+        \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
+        \hline 
+        4 & 0.000080 \\
+        \hline 
+        8 & 0.000121 \\
+        \hline 
+        12 & 0.000152 \\
+        \hline 
+        16 & 0.000176 \\
+        \hline 
+        20 & 0.000233 \\
+        \hline 
+        60 & 0.000530 \\
+        \hline 
+        100 & 0.000909 \\
+        \hline
+        140 & 0.001237 \\
+        \hline
+        147 & 0.001311 \\
+        \hline
+    \end{tabular}
+\end{table}
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel={Number of Chords (n)},
+            ylabel={Execution Time (seconds)},
+            xtick={4,20,60,100,140},
+            title={Algorithm Execution Time vs. Input Size 
+            - Luis Miguel},
+            grid=major,
+            legend pos=north west,
+            legend entries={Brute-Force Search, Dynamic Programming},
+            ymode=log
+        ]
+        % Brute-Force Search data
+        \addplot[color=blue, mark=*] coordinates {
+            (4, 0.000349) (8, 0.008179) (12, 0.105452) (16, 0.806655) (20, 46.038268)
+        }; 
+        % Dynamic Programming data
+        \addplot[color=red, mark=*] coordinates {
+            (4, 0.000080) (8, 0.000121) (12, 0.000152) (16, 0.000176) (20, 0.000233) 
+            (60, 0.000530) (100, 0.000909) (140, 0.001237) (147, 0.001311)
+        };
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Execution Time Comparison Between Brute-Force Search and Dynamic Programming - El Dia Que Me Quieras}
+    \label{fig:execution-time-2}
+\end{figure}
+
+\textbf{Results Discussion}: Again, the results remain consistent. The execution time results demonstrate the exponential nature of the brute force algorithm (Blue line). 
 The graph clearly shows the exponential growth pattern, with execution time increasing dramatically as the number of chords increases. This aligns with the algorithm's theoretical time complexity of \(\Theta(3^n)\), where n is the number of chords. The steep curve between 10 and 15 chords particularly highlights why brute force becomes impractical for longer sequences.
-
-In contrast, the dynamic programming solution (Red line) demonstrates remarkably consistent performance:
+In contrast, the dynamic programming solution (Red line) demonstrates remarkably consistent performance.
 
 \begin{itemize}
-    \item \textbf{Sixty Chords (60):} Execution time of 0.001003s
-    \item \textbf{Eighty Chords (80):} Slight increase to 0.001509s
-    \item \textbf{One Hundred Chords (100):} Maintained efficiency at 0.001005s
-    \item \textbf{One Hundred Twenty Chords (120):} Consistent performance at 0.000977s
+    \item \textbf{Sixty Chords (60):} Execution time of 0.000530s
+    \item \textbf{One Hundred Chords (100):} Maintained efficiency at 0.000909s
+    \item \textbf{One Hundred Forty Chords (140):} Consistent performance at0.001237s
 \end{itemize}
 
 The dynamic programming results showcase several key advantages:
@@ -575,110 +659,86 @@ The dynamic programming results showcase several key advantages:
 
 These results validate the theoretical time complexity of \(\Theta(n \times K^2)\) for the dynamic programming solution, where n is the number of chords and K is the maximum number of fingerings per chord. The nearly flat line in the graph demonstrates how this polynomial-time complexity translates to practical performance benefits, especially when compared to the exponential growth of the brute force approach.
 
-\subsection{Analysis - Halsey Song}
-
+\subsection{Analysis of Halsey's - Graveyard}
 \begin{table}[H]
-\centering
-\caption{Brute Force Execution Times - Halsey Song}
-\begin{tabular}{|c|c|}
-\hline
-\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
-\hline
-5 & 0.001006 \\
-10 & 0.006088 \\
-15 & 0.236356 \\
-20 & 19.808614 \\
-\hline
-\end{tabular}
-\caption{Dynamic Programming Execution Times - Halsey Song}
-\begin{tabular}{|c|c|}
-\hline
-\textbf{Number of Chords} & \textbf{Execution Time (seconds)} \\
-\hline
-60 & 0.001021 \\
-80 & 0.000958 \\
-100 & 0.001006 \\
-120 & 0.001001 \\
-\hline
-\end{tabular}
-\label{tab:halsey_analysis_times}
+    \centering 
+    \caption{Brute-Force Search Execution Times - Graveyard}
+    \renewcommand{\arraystretch}{1.2} % Increases row height for readability
+    \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
+    \begin{tabular}{|c|c|}
+        \hline 
+        \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
+        \hline 
+        4 & 0.000176 \\
+        \hline 
+        8 & 0.001854 \\
+        \hline 
+        12 & 0.033095\\
+        \hline 
+        16 & 0.202635 \\
+        \hline 
+        20 & 15.449490 \\
+        \hline
+    \end{tabular}
 \end{table}
-
+\begin{table}[H]
+    \centering
+    \caption{Dynamic Programming Execution Times - Graveyard}
+    \renewcommand{\arraystretch}{1.2} % Increases row height for readability
+    \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
+    \begin{tabular}{|c|c|}
+        \hline 
+        \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
+        \hline 
+        4 & 0.000076 \\
+        \hline 
+        8 & 0.000105 \\
+        \hline 
+        12 & 0.000141 \\
+        \hline 
+        16 & 0.000187 \\
+        \hline 
+        20 & 0.000208 \\
+        \hline 
+        60 & 0.000646 \\
+        \hline 
+        100 & 0.001207 \\
+        \hline
+        128 & 0.001611 \\
+        \hline
+    \end{tabular}
+\end{table}
 \begin{figure}[H]
-\begin{tikzpicture}
-\begin{axis}[
-    xlabel={Number of Chords},
-    ylabel={Execution Time (seconds)},
-    title={Algorithm Execution Time Comparison - Halsey Song},
-    grid=major,
-    legend pos=north west,
-    ymode=log,
-    xtick={5,20,40,60,80,100,120},
-    xmin=5,
-    xmax=125,
-    ymin=0.0000001,
-    ymax=100,
-    legend entries={Brute Force, Dynamic Programming}
-]
-\addplot[color=blue,mark=*] coordinates {
-    (5,0.001006)
-    (6,0.001009)
-    (7,0.001072)
-    (8,0.002550)
-    (9,0.007499)
-    (10,0.006088)
-    (11,0.012514)
-    (12,0.029697)
-    (13,0.027930)
-    (14,0.084792)
-    (15,0.236356)
-    (16,0.242440)
-    (17,0.756384)
-    (18,2.156566)
-    (19,6.638306)
-    (20,19.808614)
-};
-\addplot[color=red,mark=*] coordinates {
-    (60,0.001021)
-    (80,0.000958)
-    (100,0.001006)
-    (120,0.001001)
-};
-\end{axis}
-\end{tikzpicture}
-\caption{Execution time comparison for Halsey song analysis}
-\label{fig:halsey_bf_graph}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            xlabel={Number of Chords (n)},
+            ylabel={Execution Time (seconds)},
+            xtick={4,20,60,100,128},
+            title={Algorithm Execution Time vs. Input Size - Graveyard},
+            grid=major,
+            legend pos=north west,
+            legend entries={Brute-Force Search, Dynamic Programming},
+            ymode=log
+        ]
+        % Brute-Force Search data
+        \addplot[color=blue, mark=*] coordinates {
+            (4, 0.000176) (8, 0.001854) (12, 0.033095) (16, 0.202635) (20, 15.449490)
+        }; 
+        % Dynamic Programming data
+        \addplot[color=red, mark=*] coordinates {
+            (4, 0.000076) (8, 0.000105) (12, 0.000141) (16, 0.000187) (20, 0.000208) 
+            (60, 0.000646) (100, 0.001207) (128, 0.001611)
+        };
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Execution Time Comparison Between Brute-Force Search and Dynamic Programming - Graveyard}
+    \label{fig:execution-time-graveyard}
 \end{figure}
+\textbf{Analysis of Results}: The execution time results for the Halsey song demonstrate similar patterns to the previous analysis, where Brute Force displays inefficient exponential execution times. Meanwhile, dynamic programming produces linear and consistent results. 
 
-\textbf{Analysis of Results:}
-The execution time results for the Halsey song demonstrate similar patterns to the previous analysis:
+It is important to note that results may vary significantly in some values due to number of possible each fingerings has. With this said let's begin our conclusive discussion.
 
-\begin{itemize}
-    \item \textbf{Brute Force Performance:}
-    \begin{itemize}
-        \item \textbf{Five Chords:} Very efficient at 0.001006s
-        \item \textbf{Ten Chords:} Modest increase to 0.006088s
-        \item \textbf{Fifteen Chords:} Significant jump to 0.236356s
-        \item \textbf{Twenty Chords:} Major increase to 19.808614s
-    \end{itemize}
-    
-    \item \textbf{Dynamic Programming Performance:}
-    \begin{itemize}
-        \item Consistently efficient performance across all test cases
-        \item Execution times remain stable between 0.000958s and 0.001021s
-        \item No significant performance degradation even at 120 chords
-    \end{itemize}
-\end{itemize}
-
-The results show that while the brute force approach still exhibits exponential growth, it performs somewhat better on this song compared to the Luis Miguel analysis. This could be due to:
-
-\begin{itemize}
-    \item Different chord complexity in the sequence
-    \item Varying number of possible fingerings per chord
-    \item More efficient pruning of invalid combinations
-\end{itemize}
-
-The dynamic programming solution maintains its superior performance characteristics, processing the entire 120-chord sequence in approximately the same time that the brute force approach needs for 5-6 chords. This further validates the algorithm's practical applicability for real-world use cases.
 
 \section{Conclusion}
 The experimental results from both test cases (Luis Miguel and Halsey songs) provide clear evidence of the significant performance differences between brute force and dynamic programming approaches for chord sequence optimization:
