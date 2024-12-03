@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1733182076.30537 "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" "Report.pdf" "Report" 1733182078.03927 0
-  "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" 1733182074.06747 41378 99e428094645d4b6a30ec5260a1543b5 ""
+["pdflatex"] 1733249217.95528 "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" "Report.pdf" "Report" 1733249219.72395 0
+  "/Users/dampmaringmail.com/Desktop/GitHub Repos/BruteForce-and-DynamicProgramming/Document/Report.tex" 1733249217.68905 40791 04b9f63f26c5c807f1e49bf33df7e952 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/courier/pcrb7t.tfm" 1136768653 960 4ab65358b8406f30ef5496c8c096d22b ""
@@ -172,6 +172,7 @@
   "/usr/local/texlive/2024/texmf-dist/tex/latex/amsmath/amstext.sty" 1717359999 2444 71618ea5f2377e33b04fb97afdd0eac2 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/base/ifthen.sty" 1717359999 5525 3792dcd5bc92158cfaf00cc591e557cf ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/base/textcomp.sty" 1717359999 2846 50113a9b2387b6447504672739a4a25b ""
+  "/usr/local/texlive/2024/texmf-dist/tex/latex/booktabs/booktabs.sty" 1579038678 6078 f1cb470c9199e7110a27851508ed7a5c ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/cite/cite.sty" 1425427964 26218 19edeff8cdc2bcb704e8051dc55eb5a7 ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty" 1579991033 13886 d1306dcf79a944f6988e688c1785f9ce ""
   "/usr/local/texlive/2024/texmf-dist/tex/latex/float/float.sty" 1137110151 6749 16d2656a1984957e674b149555f1ea1d ""
@@ -209,8 +210,8 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1727283688 5477429 32a2a3a09e7e10c5f90c819db1b0ec36 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1727283987 3325985 6dc6d732eb0c6537dfda1492f0d1e5c6 ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "Report.aux" 1733182077.90196 5930 eaa395f6dabd418a3f50304f9fe69e71 "pdflatex"
-  "Report.tex" 1733182074.06747 41378 99e428094645d4b6a30ec5260a1543b5 ""
+  "Report.aux" 1733249219.58116 5930 a5b44f626209436676c93f3b0ba8514e "pdflatex"
+  "Report.tex" 1733249217.68905 40791 04b9f63f26c5c807f1e49bf33df7e952 ""
   (generated)
   "Report.aux"
   "Report.log"

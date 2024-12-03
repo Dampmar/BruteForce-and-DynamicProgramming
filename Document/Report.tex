@@ -10,6 +10,7 @@
 \usepackage{listings}
 \usepackage{pgfplots}
 \usepackage{float}
+\usepackage{booktabs}
 \pgfplotsset{compat=1.18}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -64,13 +65,7 @@ The optimization of musical performance through computational methods has become
 
 When playing guitar, the positioning of the left hand on the fretboard significantly impacts both the physical effort required and the smoothness of the performance. A single chord can often be played in multiple positions on the fretboard, and the choice of these positions directly affects the distance the hand must travel when transitioning between chords. For instance, a C major chord can be played in several configurations, each requiring different finger placements and fret positions.
 
-The challenge lies in determining the optimal sequence of chord positions that minimizes the total hand movement throughout an entire song. This optimization must consider various factors:
-\begin{itemize}
-    \item Multiple valid fingering positions for each chord
-    \item The physical distance between successive chord positions
-    \item The practical playability of the chosen sequences
-    \item The specific requirements of open strings and unused strings in chord formations
-\end{itemize}
+The challenge lies in determining the optimal sequence of chord positions that minimizes the total hand movement throughout an entire song. This optimization must consider various factors, such as: multiple valid fingering positions for each chord, the physical distance between successive chord positions, the practical playability of the chosen sequences, and the specific requirements of open strings and unused string in chord formations.
 
 To solve this problem, we developed two distinct algorithmic approaches. The first utilizes a brute force method, examining all possible combinations of chord positions to find the global optimum. The second employs dynamic programming techniques to efficiently compute the optimal solution by breaking down the problem into smaller subproblems and avoiding redundant calculations.
 
@@ -83,24 +78,23 @@ The Methodology of this project, is based on explaining the problem definition, 
 \subsection{Problem Outline}
 The algorithm we are looking to develop processes a song's chord sequence in standard notation (e.g., C, Am, Dm, G7) alongside a file detailing various fingerings for each chord, with the end goal of outputting the optimal sequence of chord fingerings that minimize the total hand movement throughout the song. Before understanding how the algorithm's solve this problem we first need to understand how solutions and inputs look like.
 \newline 
-\indent Both algorithms take in the same arguments. These arguments are as follows:
-\begin{itemize}
-    \item Chord List: that represents the sequence of n chords in a song. This is what the user writes in a `.txt' file. It has the expected format of a list/set of type:
-    \( C = \{c_1, c_2, c_3, \dots, c_n\} \) where the \(c_i\) element in the list represents the \(i^{th}\) chord of the song.
-    \item Chord Dict: is a helper dictionary that contains all possible fingerings of each chord instance; considering their offsets. Thus providing a mapping from chord to fingerings available. 
-\end{itemize}
-\indent These inputs remain consistent to both the brute-force search and the dynamic programming solution. Also, understanding the format of the inputs is required for comprehending the algorithms.
-\newline
-\indent Both algorithms return the same outputs, to answer (solve) the overall problem the user has. The outputs are:
-\begin{itemize}
-    \item Optimal Solution: this outputs represents the minimum hand displacement calculated for the list of chords being displaced. Results are in units of `frets displaced'.
-    \item Optimal Vector: this output represents the vector \(\sigma = \{\sigma_1, \sigma_2, \sigma_2, \ldots, \sigma_n\} \) where the \(\sigma_i\) element in this vector represents the fingering to be played in \(i^{th}\) chord of the song. Where \( \sigma_i \in [0, K_i - 1] \), considering that \( K_i \) is the number of possible fingerings for the \(i^{th}\) chord.\footnote[2]{A \(c_i\) with 3 fingerings has possible values \(\sigma_i \in [0, 1, 2] \); where $0$ stands for the $1^{st}$ fingering in the .csv file, $1$ stands for the $2^{nd}$ fingering in the .csv file, and $2$ stands for the $3^{rd}$ fingering in the .csv file; a \(c_i\) with 2 fingerings has possible values \(\sigma_i \in [0, 1] \), and \(c_i\) with 1 fingering has possible values \(\sigma_i \in [0] \).}
-    The \(\sigma\) represents the overall sequence of fingerings that minimize the overall hand displacement. 
-    \item Optimal Sequence: this output represents the optimal vector as actual fingerings, it was used to debug the program. 
-\end{itemize}
-\indent The outputs represent the solution towards the problem that we look to solve. They provide the how and the value of the solution to the problem.
-\newline
-\indent Understanding the inputs and outputs of the black box (the algorithms), we need to look at some overlapping functions that are used to calculate displacement based on what the professor stated in the project definition document.
+\indent Both algorithms take in the same parameters. These arguments are as follows: 
+
+\textbf{Chord List}: that represents the sequence of $n$ chords in a song. This is what the user writes in `.txt' file. It has the expected format of a list/set of type, \[ C = \{c_1, c_2, c_3, \ldots, c_n\} \] where the \(c_i\) element in the list represents the \(i^{th}\) chord of the song. 
+
+\textbf{Chord Dict}: a helper dictionary that contains all possible fingerings for each chord instance; considering their base frets. Thus providing a maaping from to fingerings available.
+
+\indent These inputs remain consistent to both the brute-force search and the dynamic programming solution. Also, understanding the format of the inputs is required for comprehending the algorithms. Both algorithms return the same outputs, to answer/solve the overall problem the user has. The outputs are: optimal solution, optimal vector, and optimal sequence.
+
+\textbf{Optimal solution} represents the minimum hand displacement calculated for the list of chords being displaced. This output are in units of `frets displaced'.
+
+\textbf{Optimal vector} represents the vector \[ \sigma = \{\sigma_1, \sigma_2, \sigma_2, \ldots, \sigma_n\} \] where the \(\sigma_i\) element in this vector represents the fingering to be played in place of the \(i^{th}\) chord of the song. 
+Where \( \sigma_i \in [0, K_i - 1] \), and \(K_i\) \footnote{A \(c_i\) with 3 fingerings has possible values \( \sigma_i \in [0, K_i - 1]\); where $0$ stands for the $1^{st}$ fingering in the .csv file for the chord, $1$ stands for the $2^{nd}$, and $2$ stands for the $3^{rd}$ fingering.} 
+is the number of possible fingerings for the \(i^{th}\) chord. \footnote{Values range from \( [0, K_i - 1] \) due to enumerates in the program.}
+
+\textbf{Optimal Sequence} represents the optimal vector as actual fingerings, it was used to debug the program.
+
+\indent The outputs represent the solution towards the problem that we look to solve. They provide the how and the value of the solution to the problem. Understanding the inputs and outputs as a black box (the algorithms), we need to look at some overlapping functions that are used to calculate displacement based on what the professor stated in the project definition document.
 \subsection{Helper Functions}
 The functions in this section look to provide a simple method to calculate the overall displacement between two chords. 
 \begin{figure}[H]
@@ -137,15 +131,15 @@ Brute-force search is a straightforward and exhaustive problem-solving technique
 The algorithm designed for this project, regarding brute-force search, used exhaustive exploration of all possible sequences of fingerings from the chord list. 
 There are various considerations, that should be looked at before evaluating the implementation of the algorithm: vector representation, its possible values, the space and its size.
 \newline 
-\noindent The vector has the same representation from the Problem Outline, that being: \[ \sigma = \{\sigma_1, \sigma_2, \sigma_3, \ldots, \sigma_n\} \] 
+\noindent The vector has the same representation from the Problem Outline, that being: \[ \sigma = \{\sigma_1, \sigma_2, \sigma_3, \ldots, \sigma_n\}. \] 
 \indent Where \(\sigma_i \in [0, K_i - 1]\), and where \( K_i \) represents the number of possible fingerings of the $i^{th}$ chord in the song. If the resultant vector represents the solution, the vector space can be expressed as:
-\[ S = \{0, \frac{\sum_{i=1}^{n}K_i - 1}{n} \}^{n} \]
+\[ S = \{0, \frac{\sum_{i=1}^{n}K_i - 1}{n} \}^{n}. \]
 \indent This setup of the vector space leads it to be upper bounded by \( S = \{0,1,2\}^{n} \), considering that the worst case scenario is a song composed of chords with $3$ fingerings available. The vector space size is:
-\[ |S| = 3^{n} \].
+\[ |S| = 3^{n}. \].
 \indent However, considering that there is a constraint where we should only allow chord fingerings that have base fret position of 7 or less, the space $S$ is further reduced to a subset $S'$ defined as:
-\[ S' = \{\sigma \in S \mid \text{minimum fret position of \( F(C_{\sigma_i}) \)} \leq 7, \forall(i)\} \]
+\[ S' = \{\sigma \in S \mid \text{minimum fret position of \( F(C_{\sigma_i}) \)} \leq 7, \forall(i)\}. \]
 \indent This leads to a reduction in the vector space by an incalculable amount but in theory it should decrease or maintain the same.
-\[ |S'| \leq |S| \]
+\[ |S'| \leq |S|. \]
 
 \subsubsection{Asymptotic Time Complexity}
 This algorithm has a time complexity of \(\Theta(3^{n})\) in the worst-case scenario, implying that this algorithm takes exponential time and is fairly inefficient for medium to large input sizes.  
@@ -190,12 +184,9 @@ The first part of the implementation (Figure \ref{fig:BruteForceGather}) focuses
 \label{fig:BruteForceCore}
 \end{figure}
 
-The core of the algorithm (Figure \ref{fig:BruteForceCore}) systematically evaluates every possible combination of fingerings. It uses Python's \lstinline{itertools.product} to generate all possible combinations of fingering indices for the song. For each combination:
-\begin{itemize}
-    \item Creates a sequence of actual fingerings using the current combination
-    \item Calculates the total movement cost for this sequence
-    \item Updates the optimal solution if a lower cost is found
-\end{itemize}
+The core of the algorithm (Figure \ref{fig:BruteForceCore}) systematically evaluates every possible combination of fingerings. It uses Python's \lstinline{itertools.product} to generate all possible combinations of fingering indices for the song. 
+
+For each combination: create a sequence of actual fingerings using the current combination, calculate the total movement cost for this sequence, and updates the optimal solution if a lower cost is found.
 
 \begin{figure}[H]
 \begin{lstlisting}[language=Python]
@@ -221,104 +212,61 @@ The bounded version of the algorithm adds an additional constraint check:
 This optimization ensures that only fingerings within the first seven frets are considered, which both reduces the search space and produces more practical solutions for guitar players.
 
 \subsection{Dynamic Programming}
-Dynamic Programming (DP) is an algorithmic paradigm that solves complex problems by breaking them down into simpler subproblems. For our chord transition optimization, it is applicable because:
-\begin{itemize}
-    \item Each chord transition decision affects future transitions (overlapping subproblems)
-    \item The optimal solution builds upon optimal solutions to smaller sequences (optimal substructure)
-    \item Many chord transition patterns are evaluated multiple times (memoization opportunity)
-\end{itemize}
+Dynamic Programming (DP) is an algorithmic paradigm that solves complex problems by breaking them down into simpler subproblems. For our chord transition optimization, it is applicable because: each chord transition decision affects future transitions (overlapping subproblems), the optimal solution builds upon optimal solutions to smaller sequences (optimal substructure), and many chord transition patterns are evaluated multiple times (memoization opportunity).
 
 By leveraging on these characteristics, we can systematically model and solve the problem. A key step in this process if defining the \textbf{Oracle} - the table that encapsulates the state space and transition rules of the problem.
 
 \subsubsection{Oracle Definition}
-The Oracle is defined as: \(C_{i,j}\) is equal as the minimum total movement cost from the first chord to the \(i^{th}\) chord; assuming the \(i^{th}\) is being played with the \(j^{th}\) fingering.
-\begin{itemize}
-    \item \(i\) represents the index of the current chord in the list.
-    \item \(j\) represents the index of the chosen fingering of the current chord.
-\end{itemize}
-
+The Oracle is defined as: \(C_{i,j}\) is equal as the minimum total movement cost from the first chord to the \(i^{th}\) chord; assuming the \(i^{th}\) is being played with the \(j^{th}\) fingering. Where \(i\) represents the index of the current chord in the list, and \(j\) represents the index of the chosen fingering of the current chord. 
 It is important to state that a fingering \(f\) for any chord is only considered and used in the Oracle if:
-\[ \min(\{\forall x \in f \mid x \neq \text{None}\}) \leq 7 \]
+\[ \min(\{\forall x \in f \mid x \neq \text{None}\}) \leq 7. \]
 
 Considering the setup we may begin to demonstrate the logic for each of the steps that fill up the Oracle and provide us with the solution. 
 
 \subsubsection{Dynamic Programming Steps}
-\begin{itemize}
-    \item \textbf{Base Step}: 
-    \[ C_{1,f} = 0 \text{, \(\forall f\) where \(f\) is a fingering of chord \(c_1\) }\]
+To comprehend the steps defined we must understand the Base Step, the Recursive Step and the Goal. The creation of the oracle and the retrieval of a solution is provided as follows:
 
-    \item \textbf{Recursive Step}: 
-    \[ C_{i,f} = \min_{p \in [1, K_{i-1}]}(C_{i-1, p} + cost(a, b))\]
-    Where \(a\) is the fingering \(p\) of chord \(c_{i-1}\) and \(b\) is the fingering \(f\) of chord \(c_i\), and \(cost(a,b)\) is the cost of the displacement. Also, \(K_{i-1}\) represents the number of possible fingerings of chord \(c_{i-1}\). 
+The \textbf{Base Step} is \[ C_{1,f} = 0 \text{, \(\forall f\) where \(f\) is a fingering of chord \(c_1\) }, \] since the initial chord doesn't initialize a cost to the problem. The \textbf{Recursive Step} is \[ C_{i,f} = \min_{p \in [1, K_{i-1}]}(C_{i-1, p} + cost(a, b)), \] where \(a\) is the \(p^{th}\) fingering of chord \(c_{i-1}\) and \(b\) is the \(f^{th}\) fingering of chord \(c_i\), such that \(cost(a,b)\) is the cost of the displacement between \(a\) and \(b\). Lastly, the \textbf{Goal} is \[ \min_{p \in [1, K_{n}]}(C_{n, p}), \] where we select the minimum cost of playing the final chord, based on playing it with \(p^{th}\) fingering.
 
-    \item \textbf{Goal}:
-    \[ \min_{p \in [1, K_{n}]}(C_{n, p})\]
-\end{itemize}
-
-It is important to understand that indices are (for practical purposes) being displayed from 1 to $n$ to better understand the math behind the Oracle. In practice these are indices in Python ranging from 0 to $n-1$. Slight alterations take place to comply with the language, but the logic behind the dynamic programming has the same format.
+It is important to understand that indices are (for practical purposes) are being displayed from 1 to $n$ to better understand the math behind the Oracle. In practice these indices are accessed with an offset of $-1$ ranging from 0 to $n-1$. Slight alterations take place to comply with the programming language, but the logic behind the dynamic programming has the same format.
 
 Utilizing the Oracle definition and the steps defined above, the implementation will be discussed in the following subsection.
 
 \subsubsection{Algorithm Implementation}
-The implementation consists of four main components:
+The implementation consists of four main components: initialization, oracle construction, solution reconstruction and cost normalization.
 
-\begin{enumerate}
-\item \textbf{Initialization}:
-\begin{itemize}
-    \item Collects valid fingerings for each chord from the chord dictionary
-    \item Creates Oracle and Solution dictionaries for each chord position
-    \item Sets base case costs for first chord's valid fingerings
-\end{itemize}
+The \textbf{Initialization} is the process of collecting valid fingerings for each chord from the chord dictionary, creating the oracle and solution dictionaries for each chord position, and setting the base costs for the first chord's valid fingerings.
 
-\item \textbf{Oracle Construction}:
+The \textbf{Oracle Construction} is generated using the Recursive Step in the program as follows:
 \begin{lstlisting}[language=Python]
-# Fill the Oracle
-for i in range(1, n):
-    for f, fingering in enumerate(chord_fingerings[i]):
-        if not is_valid_fingering(fingering):
-            continue
-        Oracle[i][f] = float('inf')
-        for f_prev, prev_fingering in enumerate(chord_fingerings[i - 1]):
-            if not is_valid_fingering(prev_fingering):
+    # Fill the Oracle
+    for i in range(1, n):
+        for f, fingering in enumerate(chord_fingerings[i]):
+            if not is_valid_fingering(fingering):
                 continue
-            cost = Oracle[i - 1][f_prev] + calculate_movement_displacement(prev_fingering, fingering)
-            if cost < Oracle[i][f]:
-                Oracle[i][f] = cost
-                Solution[i][f] = f_prev
+            Oracle[i][f] = float('inf')
+            for f_prev, prev_fingering in enumerate(chord_fingerings[i - 1]):
+                if not is_valid_fingering(prev_fingering):
+                    continue
+                cost = Oracle[i - 1][f_prev] + calculate_movement_displacement(prev_fingering, fingering)
+                if cost < Oracle[i][f]:
+                    Oracle[i][f] = cost
+                    Solution[i][f] = f_prev
 \end{lstlisting}
 
-\item \textbf{Solution Reconstruction}:
-\begin{itemize}
-    \item Identifies minimum cost fingering for final chord
-    \item Traces back through Solution dictionary to build optimal sequence
-    \item Returns fingering indices and actual fingerings
-\end{itemize}
+The \textbf{Solution Construction} looks to identify the minimum cost fingerings for final chord, traces back through the solution dictionary to build the optimal sequence; with the end result of returning the outputs of this algorithm properly. 
 
-\item \textbf{Cost Normalization}:
-\[ \text{final\_cost} = \sqrt{\text{min\_cost}} \]
-\end{enumerate}
+Lastly, the \textbf{Cost Normalization} is simply the normalization of the minimul cost from `frets displaced$^{2}$' to `frets displaced'.
 
 \subsubsection{Time Complexity}
-The algorithm achieves \(\Theta(n \times K^2)\) time complexity where:
-\begin{itemize}
-    \item n is the number of chords in the sequence
-    \item K is the maximum number of valid fingerings for any chord
-\end{itemize}
+The algorithm discussed above achieves a time complexity of \[ \Theta(nK^2) \] 
+where $n$ is the number of chords in the sequence, and $K$ is the maximum number of valid fingerings for each chord. We must comprehend that $K$ in the worst-case scenario $K$ is a constant value of $3$ the time complexity is of \(\Theta(n \times 9) \) which means that this algorithm takes linear time to execute.
 
-We must comprehend that K in the worst-case scenario is a constant $3$ so for the worst-case scenario the time complexity is of \(\Theta(n \times 9) \) which means that this algorithm takes linear time to execute.
+This is significantly more efficient than the brute-force search approach, with a time complexity of \(\Theta(3^n)\) as it: eliminates redundant calculations through memoization, prunes invalid fingering combinations early, and builds the solution incrementally using optimal substructure.
 
-This is significantly more efficient than the brute force approach's \(\Theta(3^n)\) complexity, as it:
-\begin{itemize}
-    \item Eliminates redundant calculations through memoization
-    \item Prunes invalid fingering combinations early
-    \item Builds the solution incrementally using optimal substructure
-\end{itemize}
 
 \subsubsection{Code Implementation}
-The dynamic programming algorithm is implemented through several key components:
-
-\begin{enumerate}
-\item \textbf{Helper Functions}:
+The dynamic programming algorithm is implemented through several key components. It uses a \textbf{Helper Functions} to facilitate the validation of fingerings:
 \begin{lstlisting}[language=Python]
 def is_valid_fingering(fingering):
     valid_frets = [fret for fret in fingering if fret is not None]
@@ -326,73 +274,52 @@ def is_valid_fingering(fingering):
         return False
     return min(valid_frets) <= 7
 \end{lstlisting}
-This validation function ensures that:
-\begin{itemize}
-    \item Only considers frets that are actually used (not None)
-    \item Returns False if no valid frets exist
-    \item Enforces the constraint that minimum fret position must be \(\leq 7\)
-\end{itemize}
 
-\item \textbf{Fingering Collection}:
+The validation function ensures that the algorithm only considers frets that are actually used (not None), returns false if no valid frets exist, enforces the constraint that minimum fret position must be \(\leq 7\).
+
+The creation of fingering collections is performed by:
+\newpage
 \begin{lstlisting}[language=Python]
-chord_fingerings = []
-for chord in chord_list:
-    if chord in chord_dict:
-        fingerings = []
-        for key in ['Finger A', 'Finger B', 'Finger C']:
-            if key in chord_dict[chord]:
-                fingering = chord_dict[chord][key]
-                fingerings.append(fingering)
+    chord_fingerings = []
+    for chord in chord_list:
+        if chord in chord_dict:
+            fingerings = []
+            for key in ['Finger A', 'Finger B', 'Finger C']:
+                if key in chord_dict[chord]:
+                    fingering = chord_dict[chord][key]
+                    fingerings.append(fingering)
 \end{lstlisting}
-This initialization phase:
-\begin{itemize}
-    \item Processes each chord in the input sequence
-    \item Collects up to three possible fingerings (A, B, C) per chord
-    \item Validates chord existence in the dictionary
-\end{itemize}
 
-\item \textbf{DP Table Construction}:
+This initialization phase looks to process each chord in the input sequence while collecting up to three valid fingerings (A, B, C) per chord in the dictionary.
+Before delving into the core logic, we need to fill up the base step. This process is performed by the following logic:
 \begin{lstlisting}[language=Python]
-n = len(chord_list)
-Oracle = [{} for _ in range(n)]  # Each entry is a dictionary
-Solution = [{} for _ in range(n)]  # Tracks previous indices
-
-# Initialize base case
-for f, fingering in enumerate(chord_fingerings[0]):
-    if is_valid_fingering(fingering):
-        Oracle[0][f] = 0
+    n = len(chord_list)
+    Oracle = [{} for _ in range(n)]  # Each entry is a dictionary
+    Solution = [{} for _ in range(n)]  # Tracks previous indices
+    
+    # Initialize base case
+    for f, fingering in enumerate(chord_fingerings[0]):
+        if is_valid_fingering(fingering):
+            Oracle[0][f] = 0
 \end{lstlisting}
-The initialization creates:
-\begin{itemize}
-    \item Two arrays of dictionaries for Oracle and Solution tracking
-    \item Sets base case costs to 0 for valid first chord fingerings
-\end{itemize}
-
-\item \textbf{Core DP Algorithm}:
+This setup initalizes the two dictionaries for the Oracle and the Solution, and also begins the Oracle with the aforementioned Base Step. Considering the initial setup, the core dynamic programming logic of this algorithm implementation is as follows:
 \begin{lstlisting}[language=Python]
-for i in range(1, n):
-    for f, fingering in enumerate(chord_fingerings[i]):
-        if not is_valid_fingering(fingering):
-            continue
-        Oracle[i][f] = float('inf')
-        for f_prev, prev_fingering in enumerate(chord_fingerings[i - 1]):
-            if not is_valid_fingering(prev_fingering):
+    for i in range(1, n):
+        for f, fingering in enumerate(chord_fingerings[i]):
+            if not is_valid_fingering(fingering):
                 continue
-            cost = Oracle[i - 1][f_prev] + calculate_movement_displacement(
-                prev_fingering, fingering)
-            if cost < Oracle[i][f]:
-                Oracle[i][f] = cost
-                Solution[i][f] = f_prev
+            Oracle[i][f] = float('inf')
+            for f_prev, prev_fingering in enumerate(chord_fingerings[i - 1]):
+                if not is_valid_fingering(prev_fingering):
+                    continue
+                cost = Oracle[i - 1][f_prev] + calculate_movement_displacement(
+                    prev_fingering, fingering)
+                if cost < Oracle[i][f]:
+                    Oracle[i][f] = cost
+                    Solution[i][f] = f_prev
 \end{lstlisting}
-The main algorithm:
-\begin{itemize}
-    \item Iterates through each chord position
-    \item For each valid current fingering
-    \item Considers all valid previous fingerings
-    \item Updates minimum cost and solution path
-\end{itemize}
-
-\item \textbf{Solution Reconstruction}:
+This main algorithm iterates through each chord position for each valid current fingering, while considering all valid previous fingerings and filling up the oracle and the solution with the minimum cost and the solution vector in the process. With this, the last part of the algorithm is to reconstruct the solution once the Oracle has been filled, this processs is done by: starting form the optimal final fingering, tracing back through the Solution dictionary, building both the fingering and the index sequence, and reversing the sequence to get the beginning to end traversal of the solution. This is done with the following algorithm:
+\newpage
 \begin{lstlisting}[language=Python]
 sequence = []
 indexes = []
@@ -404,14 +331,6 @@ for i in range(n - 1, -1, -1):
 sequence.reverse()
 indexes.reverse()
 \end{lstlisting}
-The reconstruction process:
-\begin{itemize}
-    \item Starts from the optimal final fingering
-    \item Traces back through the Solution dictionary
-    \item Builds both fingering sequence and index sequence
-    \item Reverses sequences to get correct order
-\end{itemize}
-\end{enumerate}
 
 The implementation uses dictionaries instead of traditional arrays to efficiently handle varying numbers of valid fingerings per chord. The final cost is normalized using square root to maintain consistency with the problem's distance metric.
 
@@ -420,49 +339,25 @@ The implementation uses dictionaries instead of traditional arrays to efficientl
 \subsection{Greedy Approach}
 A greedy algorithm was not implemented for this problem because a greedy approach cannot guarantee an optimal solution for chord sequence optimization. Here's why:
 
-\begin{itemize}
-    \item A greedy algorithm would make locally optimal choices at each step, selecting the chord fingering that minimizes movement from the current position
-    \item However, these locally optimal choices do not necessarily lead to a globally optimal solution
-    \item Consider this example:
-    \begin{itemize}
-        \item For a sequence "C-Am-G", a greedy approach might choose:
-        \item The closest fingering of Am to the initial C chord position
-        \item Then the closest G fingering to that Am position
-        \item This could result in a larger total movement than choosing a slightly "worse" initial transition that enables a much better final transition
-    \end{itemize}
-    \item The problem requires considering the entire sequence of transitions to find the true optimal solution, which is why we implemented:
-    \begin{itemize}
-        \item Brute force approach: Guarantees optimality by checking all possibilities
-        \item Dynamic programming approach: Efficiently finds the optimal solution by considering all possible combinations systematically
-    \end{itemize}
-\end{itemize}
+A greedy algorithm would make locally optimal choices at each step, selecting the chord fingering that minimizes movement from the current position. However, these local choices do not necessarily lead to a globally optimal solution. Let's look at the following example:
+
+For a sequence ``C-Am-G'' a greedy approach might choose the closest fingering of Am to the inital C chord position, and then closest G fingering to the Am position. This could result in a larger total movement than choosing a slighlty ``worse'' initial transition that enables a much better final transition.
+
+The problem requires considering the entire sequence of transitions to find the true optimal solution, which is why we implemented: brute-force search, since it guarantees optimality by checking all possibilities; and dynamic programming approach, efficiently finds the optimal sequence by considering all possible combinations systematically.
 
 Therefore, this project focuses on the brute force and dynamic programming solutions as they are capable of finding the globally optimal solution to the chord sequence optimization problem.
 
 \section{Tests}
-To evaluate the performance and effectiveness of both algorithms, we conducted tests using three musical pieces provided by the professor:
-
-\begin{itemize}
-    \item Luis Miguel - El dia que me quieras
-    \item Halsey - Graveyard
-    \item Toto - Hold The Line
-\end{itemize}
+To evaluate the performance and effectiveness of both algorithms, we conducted tests using three musical pieces provided by the professor: Luis Miguel - El Dia Que Me Quieras, Halsey - Graveyard, and Toto - Hold The Line. 
 
 \subsection{Test Setup}
 Each algorithm was tested with different chord sequence lengths to analyze their scalability and performance characteristics:
 
 \subsubsection{Brute Force Test Cases}
-Brute-force search was tested utilizing increments of 4 up to 20 chords in a sequence, an example of this sequence:
-\begin{itemize}
-    \item 4 chords
-    \item 8 chords
-    \item 12 chords
-    \item 16 chords
-    \item 20 chords
-\end{itemize}
+Brute-force search was tested utilizing increments of 4 up to 20 chords in a chord sequence, an example of this sequence would be: 4, 8, 12, 16 and 20 chords in a sequence.  
 
 \subsubsection{Dynamic Programming Test Cases}
-Dynamic Programming being a better performing algorithm was tested utilizing increments of 40 starting at 20, up to the maximum input size of a song; and also by utilizing the increments of Brute-Force Search. Such as, the following in Toto - Hold The Line. 
+Dynamic Programming being a better performing algorithm was tested utilizing increments of 40 starting at 20, up to the maximum input size of a song; and also by utilizing the increments defined for the Brute-Force Search. Such as, the following test for Toto - Hold The Line: 4, 8, 12, 16, 20, 60, 100, 140, 180 and 206 chords in a sequence.
 
 \section{Results}
 Before delving into the discussion of results and conclusions, it is important to state that both the brute-force search and the dynamic programming algorithm's have been tested and compared to the results provided by Dr. Camacho as a proof for proper behavior. For all test cases in this section, the minimum cost is the same as the one provided by the professor. 
@@ -473,20 +368,16 @@ Before delving into the discussion of results and conclusions, it is important t
     \caption{Brute-Force Search Execution Times - Hold The Line}
     \renewcommand{\arraystretch}{1.2} % Increases row height for readability
     \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
-    \begin{tabular}{|c|c|}
-        \hline 
+    \begin{tabular}{r r}
+        \toprule
         \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
-        \hline 
+        \midrule 
         4 & 0.000231 \\
-        \hline 
         8 & 0.002293 \\
-        \hline 
         12 & 0.106462 \\
-        \hline 
-        16 & 1.525553 \\
-        \hline 
+        16 & 1.525553 \\ 
         20 & 27.776092 \\
-        \hline
+        \bottomrule
     \end{tabular}
 \end{table}
 
@@ -495,30 +386,21 @@ Before delving into the discussion of results and conclusions, it is important t
     \caption{Dynamic Programming Execution Times - Hold The Line}
     \renewcommand{\arraystretch}{1.2} % Increases row height for readability
     \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
-    \begin{tabular}{|c|c|}
-        \hline 
+    \begin{tabular}{r r}
+        \toprule 
         \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
-        \hline 
+        \midrule 
         4 & 0.000107 \\
-        \hline 
         8 & 0.000142 \\
-        \hline 
         12 & 0.000177 \\
-        \hline 
         16 & 0.000221 \\
-        \hline 
         20 & 0.000283 \\
-        \hline 
         60 & 0.000652 \\
-        \hline 
         100 & 0.000964 \\
-        \hline
         140 & 0.001265 \\
-        \hline
         180 & 0.001642 \\
-        \hline
         206 & 0.001821 \\
-        \hline
+        \bottomrule
     \end{tabular}
 \end{table}
 
@@ -564,20 +446,16 @@ Meanwhile, Dynamic Programming Contains a slight linear increase as the input si
     \caption{Brute-Force Search Execution Times - El Dia Que Me Quieras}
     \renewcommand{\arraystretch}{1.2} % Increases row height for readability
     \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
-    \begin{tabular}{|c|c|}
-        \hline 
+    \begin{tabular}{r r}
+        \toprule 
         \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
-        \hline 
+        \midrule
         4 & 0.000349 \\
-        \hline 
         8 & 0.008179 \\
-        \hline 
         12 & 0.105452 \\
-        \hline 
-        16 & 0.806655 \\
-        \hline 
+        16 & 0.806655 \\ 
         20 & 46.038268 \\
-        \hline
+        \bottomrule
     \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -585,28 +463,20 @@ Meanwhile, Dynamic Programming Contains a slight linear increase as the input si
     \caption{Dynamic Programming Execution Times - El Dia Que Me Quieras}
     \renewcommand{\arraystretch}{1.2} % Increases row height for readability
     \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
-    \begin{tabular}{|c|c|}
-        \hline 
+    \begin{tabular}{r r}
+        \toprule 
         \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
-        \hline 
+        \midrule 
         4 & 0.000080 \\
-        \hline 
         8 & 0.000121 \\
-        \hline 
         12 & 0.000152 \\
-        \hline 
         16 & 0.000176 \\
-        \hline 
         20 & 0.000233 \\
-        \hline 
         60 & 0.000530 \\
-        \hline 
         100 & 0.000909 \\
-        \hline
         140 & 0.001237 \\
-        \hline
         147 & 0.001311 \\
-        \hline
+        \bottomrule
     \end{tabular}
 \end{table}
 \begin{figure}[H]
@@ -619,7 +489,7 @@ Meanwhile, Dynamic Programming Contains a slight linear increase as the input si
             title={Algorithm Execution Time vs. Input Size 
             - Luis Miguel},
             grid=major,
-            legend pos=north west,
+            legend pos=north east,
             legend entries={Brute-Force Search, Dynamic Programming},
             ymode=log
         ]
@@ -665,20 +535,16 @@ These results validate the theoretical time complexity of \(\Theta(n \times K^2)
     \caption{Brute-Force Search Execution Times - Graveyard}
     \renewcommand{\arraystretch}{1.2} % Increases row height for readability
     \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
-    \begin{tabular}{|c|c|}
-        \hline 
+    \begin{tabular}{r r}
+        \toprule 
         \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
-        \hline 
+        \midrule 
         4 & 0.000176 \\
-        \hline 
         8 & 0.001854 \\
-        \hline 
         12 & 0.033095\\
-        \hline 
         16 & 0.202635 \\
-        \hline 
         20 & 15.449490 \\
-        \hline
+        \bottomrule
     \end{tabular}
 \end{table}
 \begin{table}[H]
@@ -686,26 +552,19 @@ These results validate the theoretical time complexity of \(\Theta(n \times K^2)
     \caption{Dynamic Programming Execution Times - Graveyard}
     \renewcommand{\arraystretch}{1.2} % Increases row height for readability
     \setlength{\tabcolsep}{3pt} % Adjusts padding between columns
-    \begin{tabular}{|c|c|}
-        \hline 
+    \begin{tabular}{r r}
+        \toprule 
         \textbf{Input Size ($n$)} & \textbf{Execution Time ($s$)} \\
-        \hline 
-        4 & 0.000076 \\
-        \hline 
+        \midrule 
+        4 & 0.000076 \\ 
         8 & 0.000105 \\
-        \hline 
         12 & 0.000141 \\
-        \hline 
         16 & 0.000187 \\
-        \hline 
         20 & 0.000208 \\
-        \hline 
         60 & 0.000646 \\
-        \hline 
         100 & 0.001207 \\
-        \hline
         128 & 0.001611 \\
-        \hline
+        \bottomrule
     \end{tabular}
 \end{table}
 \begin{figure}[H]
@@ -717,7 +576,7 @@ These results validate the theoretical time complexity of \(\Theta(n \times K^2)
             xtick={4,20,60,100,128},
             title={Algorithm Execution Time vs. Input Size - Graveyard},
             grid=major,
-            legend pos=north west,
+            legend pos=north east,
             legend entries={Brute-Force Search, Dynamic Programming},
             ymode=log
         ]
