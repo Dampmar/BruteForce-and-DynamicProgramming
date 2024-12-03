@@ -512,20 +512,9 @@ Meanwhile, Dynamic Programming Contains a slight linear increase as the input si
 The graph clearly shows the exponential growth pattern, with execution time increasing dramatically as the number of chords increases. This aligns with the algorithm's theoretical time complexity of \(\Theta(3^n)\), where n is the number of chords. The steep curve between 10 and 15 chords particularly highlights why brute force becomes impractical for longer sequences.
 In contrast, the dynamic programming solution (Red line) demonstrates remarkably consistent performance.
 
-\begin{itemize}
-    \item \textbf{Sixty Chords (60):} Execution time of 0.000530s
-    \item \textbf{One Hundred Chords (100):} Maintained efficiency at 0.000909s
-    \item \textbf{One Hundred Forty Chords (140):} Consistent performance at0.001237s
-\end{itemize}
+For sequences of sixty chords, the execution time was merely 0.000530s. When increased to one hundred chords, the algorithm maintained its efficiency at 0.000909s. Even at one hundred forty chords, it demonstrated consistent performance at 0.001237s.
 
-The dynamic programming results showcase several key advantages:
-
-\begin{itemize}
-    \item \textbf{Scalability:} The algorithm maintains near-constant execution times even as the input size triples from 40 to 120 chords
-    \item \textbf{Efficiency:} Processing 120 chords takes approximately the same time as the brute force approach needs for just 5 chords
-    \item \textbf{Consistency:} The slight variations in execution time (between 0.000977s and 0.001509s) demonstrate stable performance regardless of input size
-    \item \textbf{Practical Applicability:} The algorithm's ability to handle large chord sequences in milliseconds makes it suitable for real-world applications
-\end{itemize}
+The dynamic programming results showcase several key advantages. In terms of scalability, the algorithm maintains near-constant execution times even as the input size triples from 40 to 120 chords. Its efficiency is particularly notable, as processing 120 chords takes approximately the same time as the brute force approach needs for just 5 chords. The consistency is demonstrated through slight variations in execution time (between 0.000977s and 0.001509s), showing stable performance regardless of input size. Finally, the practical applicability is evident in the algorithm's ability to handle large chord sequences in milliseconds, making it suitable for real-world applications.
 
 These results validate the theoretical time complexity of \(\Theta(n \times K^2)\) for the dynamic programming solution, where n is the number of chords and K is the maximum number of fingerings per chord. The nearly flat line in the graph demonstrates how this polynomial-time complexity translates to practical performance benefits, especially when compared to the exponential growth of the brute force approach.
 
@@ -603,51 +592,22 @@ It is important to note that results may vary significantly in some values due t
 The experimental results from both test cases (Luis Miguel and Halsey songs) provide clear evidence of the significant performance differences between brute force and dynamic programming approaches for chord sequence optimization:
 
 \subsection{Performance Analysis}
-\begin{itemize}
-    \item \textbf{Brute Force Limitations:}
-    \begin{itemize}
-        \item Exhibits clear exponential growth (\(\Theta(3^n)\)) in execution time
-        \item Becomes impractical beyond 15-20 chords
-        \item Luis Miguel test: 20 chords took 65.97 seconds
-        \item Halsey test: 20 chords took 19.81 seconds
-    \end{itemize}
+
+The brute force approach demonstrates significant limitations in its performance. The algorithm exhibits clear exponential growth (\(\Theta(3^n)\)) in execution time, becoming impractical for sequences beyond 15-20 chords. This limitation is clearly demonstrated in our test results: for a sequence of 20 chords, the Luis Miguel test required 65.97 seconds to complete, while the Halsey test took 19.81 seconds for the same number of chords.
     
-    \item \textbf{Dynamic Programming Advantages:}
-    \begin{itemize}
-        \item Maintains consistent performance (\(\Theta(n \times K^2)\))
-        \item Processes sequences of 120 chords in approximately 0.001 seconds
-        \item Shows negligible variation in execution time across different songs
-        \item Scales efficiently with increased input size
-    \end{itemize}
-\end{itemize}
+In contrast, the dynamic programming solution demonstrates remarkably consistent performance. The algorithm maintains consistent performance with its theoretical time complexity of \(\Theta(n \times K^2)\), processing sequences of 120 chords in approximately 0.001 seconds. It shows negligible variation in execution time across different songs and scales efficiently with increased input size, making it a far more practical solution for real-world applications.
 
 \subsection{Practical Implications}
 The test results demonstrate that while both algorithms find optimal solutions:
 
-\begin{itemize}
-    \item Dynamic programming is the clear choice for practical applications, offering:
-    \begin{itemize}
-        \item Ability to handle full-length songs efficiently
-        \item Consistent performance across different musical styles
-        \item Scalability for real-time applications
-    \end{itemize}
-    
-    \item Brute force approach is only suitable for:
-    \begin{itemize}
-        \item Very short chord sequences (under 15 chords)
-        \item Educational purposes demonstrating algorithmic concepts
-        \item Verification of dynamic programming results
-    \end{itemize}
-\end{itemize}
+Dynamic programming is the clear choice for practical applications. It offers the ability to handle full-length songs efficiently, provides consistent performance across different musical styles, and delivers the necessary scalability for real-time applications.
+
+The brute force approach, however, is only suitable for very short chord sequences (under 15 chords), educational purposes demonstrating algorithmic concepts, and verification of dynamic programming results.
 
 \subsection{Final Observations}
 The implementation and testing of both algorithms reveal that the choice between brute force and dynamic programming for chord sequence optimization isn't merely about theoretical complexity—it has practical implications for usability:
 
-\begin{itemize}
-    \item The dynamic programming solution achieves the project's goal of providing a practical tool for minimizing hand movement in guitar performances
-    \item The exponential growth of the brute force approach makes it unsuitable for real-world applications despite its conceptual simplicity
-    \item The consistent sub-millisecond performance of dynamic programming enables its use in interactive music applications
-\end{itemize}
+The implementation and testing of both algorithms reveal that the choice between brute force and dynamic programming for chord sequence optimization isn't merely about theoretical complexity—it has practical implications for usability. The dynamic programming solution achieves the project's goal of providing a practical tool for minimizing hand movement in guitar performances. The exponential growth of the brute force approach makes it unsuitable for real-world applications despite its conceptual simplicity. The consistent sub-millisecond performance of dynamic programming enables its use in interactive music applications.
 
 This project demonstrates the importance of selecting appropriate algorithmic approaches for optimization problems in musical computing, where efficiency and scalability are crucial for practical applications.
 
